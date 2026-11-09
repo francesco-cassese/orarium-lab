@@ -1,2 +1,2 @@
 # orarium-lab
-Esercizi e appunti per imparare costruendo, collegati al progetto Orarium.
+Il mio quaderno di studio: provo, sbaglio, capisco e poi uso tutto in Orarium.
