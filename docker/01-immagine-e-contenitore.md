@@ -1,41 +1,51 @@
-# 01 - Immagine e contenitore
-
 ## Teoria
 
 ### L'idea in due righe
-Docker fa girare un programma in una "stanza" separata dal resto del tuo computer.
+Docker fa girare un programma in un ambiente isolato dal resto del tuo computer.
 Due parole da non confondere: **immagine** e **contenitore**.
 
 ### Immagine = il modello
-Un'immagine è un modello che non si può modificare. Dentro c'è tutto quello che serve
-per far partire un programma: il programma, le librerie e le impostazioni.
-Se vuoi una versione diversa non cambi l'immagine: ne crei una nuova, aggiungendo
-altri strati sopra.
+Un'immagine è un modello in sola lettura, cioè non si modifica. Dentro c'è quello che
+serve per far partire un programma: il programma, le librerie e la configurazione.
+Per avere una versione diversa si costruisce una nuova immagine, oppure si aggiungono
+strati (layer) sopra quelli che già ci sono.
 
-### Contenitore = il modello in funzione
-Un contenitore è un'immagine che sta girando. È un processo isolato: ha i suoi file
-e non disturba il resto del computer né gli altri contenitori.
-Se ne elimini uno, gli altri continuano a funzionare.
+**Analogia (mia, non della documentazione): la classe.**
+Una classe come `Ingredient` descrive com'è fatto un oggetto, ma non è un oggetto:
+è un modello, e finché non crei un oggetto non succede niente. L'immagine funziona così:
+descrive cosa serve al programma, ma da sola non gira.
+Dove l'analogia si ferma: una classe contiene codice, un'immagine contiene programma,
+librerie e configurazione.
 
-### Un paragone 
-L'immagine è la ricetta con gli ingredienti già pronti in una scatola sigillata.
-Il contenitore è il piatto che stai cucinando adesso.
+### Contenitore = l'immagine messa in funzione
+Un contenitore è un'istanza di un'immagine che si può avviare. È un processo isolato
+che ha i suoi file. Ha un'influenza minima sul computer e sugli altri contenitori.
+Se ne elimini uno, gli altri non cambiano.
+
+**Analogia (mia, non della documentazione): l'oggetto.**
+Con `new Ingredient()` crei un oggetto a partire dalla classe: quell'oggetto gira, ha
+il suo stato e può cambiare. Quando lo distruggi, il suo stato sparisce, ma la classe
+resta com'è. Il contenitore è lo stesso: nasce da un'immagine, ha il suo stato, e se lo
+elimini l'immagine non cambia.
+Dove l'analogia si ferma: un oggetto vive dentro un programma; un contenitore è un
+processo isolato, con i suoi file.
 
 ### Cosa succede ai dati
-Se elimini un contenitore, spariscono le modifiche che aveva fatto, a meno che siano
-salvate in un archivio persistente. Come si fa lo vediamo più avanti.
+Se elimini un contenitore, spariscono le modifiche al suo stato che non sono salvate
+in un archivio persistente. Come si fa lo vediamo più avanti.
 
 ### In breve
 | | Immagine | Contenitore |
 |---|---|---|
-| Cos'è | un modello | il modello in funzione |
-| Si modifica? | no, se ne fa un'altra | sì, mentre gira |
-| Se lo elimini | il programma non parte più da lì | spariscono le sue modifiche, se non salvate |
+| Cos'è | un modello in sola lettura | un'istanza dell'immagine che si può avviare |
+| Modifiche | non si modifica: se ne fa un'altra o si aggiungono strati | può cambiare il suo stato; se lo elimini, le modifiche non salvate spariscono |
 
 ## Dalla documentazione (parole originali)
 - "An image is a read-only template with instructions for creating a Docker container."
 - "A container is a runnable instance of an image."
 - "A container is simply an isolated process with all of the files it needs to run."
+- "Since containers run in isolation, they have minimal influence on the host and
+  other containers."
 - "Deleting one container won't affect any others."
 - "When a container is removed, any changes to its state that aren't stored in
   persistent storage disappear."
@@ -49,7 +59,7 @@ salvate in un archivio persistente. Come si fa lo vediamo più avanti.
 
 3. Perché si dice che un'immagine è "in sola lettura"? Cosa devo fare se voglio una
    versione diversa?
-   Risposta: Si dice di sola lettura perchè non va mai cambiata, se ti serve aggiungere o modificare caratteristiche puoi farlo creandone un altro e aggiungendo strati sopra a quella vecchia.
+   Risposta: Si dice di sola lettura perchè non va mai cambiata, se ti serve aggiungere o modificare caratteristiche puoi farlo creandone un'altra e aggiungendo strati sopra a quella vecchia.
 
 4. Se elimino un contenitore, cosa succede all'immagine da cui è nato? E alle
    modifiche che il contenitore aveva fatto?
@@ -57,7 +67,25 @@ salvate in un archivio persistente. Come si fa lo vediamo più avanti.
 
 5. Completa con parole tue: "L'immagine sta al contenitore come ___ sta a ___".
    Poi spiega perché hai scelto proprio quel paragone.
-   Risposta: L'immagine sta al contenitore come la Classe sta all'Oggetto. L'immagine definisce la struttura di base ed è fissa (immutabile). Il container è l'istanza viva: ha una sua memoria e sta lavorando. L'unica differenza è che due oggetti nel codice condividono la stessa memoria del programma, mentre i container sono scatole isolate il più possibile dal resto del computer.  
+   Risposta: L'immagine sta al contenitore come la Classe sta all'Oggetto. L'immagine definisce la struttura di base ed è fissa (immutabile). Il container è l'istanza viva: ha un suo stato e sta lavorando. L'unica differenza è che due oggetti nel codice condividono la stessa memoria del programma, mentre i container sono scatole isolate il più possibile dal resto del computer.  
+
+## Dopo l'esercizio
+
+### Cosa ho fatto
+- Comandi usati (descritti nel [diario](comandi.md)): `docker image ls`, `Select-String ...`
+
+### Cosa ho visto
+- Sul mio computer ci sono 10 immagini: 8 `catalog-backend` e 2 in uso (`mysql:8.4.13`, `redis:8.2.6`).
+- Le `catalog-backend` hanno lo stesso nome ma tag e ID diversi.
+
+### Cosa ho verificato
+- Orarium usa `mysql:8.4.13` (riga 4 di `compose.yaml`) e `redis:8.2.6` (riga 22): verificato leggendo `compose.yaml` con `Select-String`.
+
+### Cosa ho dedotto e non ancora verificato
+- Le `catalog-backend` vengono dal corso Azure e non sono in uso.
+
+### Domande aperte
+- Perché `mysql:8.4.13` ha 1.12GB di `DISK USAGE` e 254MB di `CONTENT SIZE`?
 
 
 ## Fonti
