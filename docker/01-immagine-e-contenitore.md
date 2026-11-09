@@ -21,6 +21,8 @@ librerie e configurazione.
 Un contenitore è un'istanza di un'immagine che si può avviare. È un processo isolato
 che ha i suoi file. Ha un'influenza minima sul computer e sugli altri contenitori.
 Se ne elimini uno, gli altri non cambiano.
+Un contenitore è definito dalla sua immagine e dalle opzioni che gli dai quando lo
+crei o lo avvii.
 
 **Analogia (mia, non della documentazione): l'oggetto.**
 Con `new Ingredient()` crei un oggetto a partire dalla classe: quell'oggetto gira, ha
@@ -41,14 +43,9 @@ in un archivio persistente. Come si fa lo vediamo più avanti.
 | Modifiche | non si modifica: se ne fa un'altra o si aggiungono strati | può cambiare il suo stato; se lo elimini, le modifiche non salvate spariscono |
 
 ## Dalla documentazione (parole originali)
-- "An image is a read-only template with instructions for creating a Docker container."
-- "A container is a runnable instance of an image."
-- "A container is simply an isolated process with all of the files it needs to run."
-- "Since containers run in isolation, they have minimal influence on the host and
-  other containers."
-- "Deleting one container won't affect any others."
-- "When a container is removed, any changes to its state that aren't stored in
-  persistent storage disappear."
+- Da [What is an image?](https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-an-image/): "Images are immutable. Once an image is created, it can't be modified."; "You can only make a new image or add changes on top of it."
+- Da [What is Docker?](https://docs.docker.com/get-started/docker-overview/): "An image is a read-only template with instructions for creating a Docker container."; "A container is a runnable instance of an image."; "A container is defined by its image as well as any configuration options you provide to it when you create or start it."; "When a container is removed, any changes to its state that aren't stored in persistent storage disappear."
+- Da [What is a container?](https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/): "A container is simply an isolated process with all of the files it needs to run."; "Since containers run in isolation, they have minimal influence on the host and other containers."; "Deleting one container won't affect any others."
 
 ## Con parole mie
 1. Cos'è un'immagine? 
@@ -73,7 +70,7 @@ in un archivio persistente. Come si fa lo vediamo più avanti.
 
 ### Passo 1: vedere le immagini sul mio computer
 - Comando: `docker image ls`
-- Cosa ho visto: Otto immagini `catalog-backend`: sette dal registry Azure del corso (tag da `:19` a `:37`) e una locale (`:ud14-local`). Due con la **U** (in uso): `mysql:8.4.13` e `redis:8.2.6`, usate da Orarium, verificato in compose.yaml (vedi riga sotto).
+- Cosa ho visto: Otto immagini `catalog-backend`: sette dal registry Azure del corso (tag da `:19` a `:37`) e una locale (`:ud14-local`). Due con la **U** (in uso): `mysql:8.4.13` e `redis:8.2.6`, usate da Orarium, verificato in compose.yaml (vedi passo 2).
 
 ### Passo 2: controllare le immagini di Orarium
 - Comando: `Select-String -Path ..\orarium\compose.yaml -Pattern "image:"`
@@ -83,7 +80,7 @@ in un archivio persistente. Come si fa lo vediamo più avanti.
 ## Dopo l'esercizio
 
 ### Cosa ho fatto
-- Comandi usati (descritti nel [diario](comandi.md)): `docker image ls`, `Select-String ...`
+- Comandi usati (descritti nel [diario](comandi.md)): `docker image ls`, `Select-String -Path ..\orarium\compose.yaml -Pattern "image:"`
 
 ### Cosa ho visto
 - Sul mio computer ci sono 10 immagini: 8 `catalog-backend` e 2 in uso (`mysql:8.4.13`, `redis:8.2.6`).
@@ -93,11 +90,10 @@ in un archivio persistente. Come si fa lo vediamo più avanti.
 - Orarium usa `mysql:8.4.13` (riga 4 di `compose.yaml`) e `redis:8.2.6` (riga 22): verificato leggendo `compose.yaml` con `Select-String`.
 
 ### Cosa ho dedotto e non ancora verificato
-- Le `catalog-backend` vengono dal corso Azure e non sono in uso.
+- Sette `catalog-backend` vengono dal corso Azure, una è locale.
 
 ### Domande aperte
 - Perché `mysql:8.4.13` ha 1.12GB di `DISK USAGE` e 254MB di `CONTENT SIZE`?
-
 
 ## Fonti
 - [What is an image?](https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-an-image/)
