@@ -69,6 +69,17 @@ in un archivio persistente. Come si fa lo vediamo più avanti.
    Poi spiega perché hai scelto proprio quel paragone.
    Risposta: L'immagine sta al contenitore come la Classe sta all'Oggetto. L'immagine definisce la struttura di base ed è fissa (immutabile). Il container è l'istanza viva: ha un suo stato e sta lavorando. L'unica differenza è che due oggetti nel codice condividono la stessa memoria del programma, mentre i container sono scatole isolate il più possibile dal resto del computer.  
 
+## Esercizio: la traccia
+
+### Passo 1: vedere le immagini sul mio computer
+- Comando: `docker image ls`
+- Cosa ho visto: Otto immagini `catalog-backend`: sette dal registry Azure del corso (tag da `:19` a `:37`) e una locale (`:ud14-local`). Due con la **U** (in uso): `mysql:8.4.13` e `redis:8.2.6`, usate da Orarium, verificato in compose.yaml (vedi riga sotto).
+
+### Passo 2: controllare le immagini di Orarium
+- Comando: `Select-String -Path ..\orarium\compose.yaml -Pattern "image:"`
+- Cosa ho visto: image: mysql:8.4.13 (riga 4) e image: redis:8.2.6 (riga 22) in compose.yaml.
+- Cosa ho concluso: Orarium usa `mysql:8.4.13` e `redis:8.2.6`, cioè le due immagini che Docker segna come in uso.
+
 ## Dopo l'esercizio
 
 ### Cosa ho fatto
