@@ -5,7 +5,7 @@ Orarium è il progetto a cui mi serve tutto questo: un'app per pianificare produ
 
 ## Come è organizzata
 
-- [docker/](docker/): esercizi su Docker (per ora: immagine e contenitore).
+- [docker/](docker/): esercizi su Docker (per ora: immagine e contenitore, avviare, vedere e fermare un contenitore).
 
 ## Come lavoro
 
@@ -16,4 +16,4 @@ Orarium è il progetto a cui mi serve tutto questo: un'app per pianificare produ
 
 ## Stato
 
-Ho fatto l'esercizio 01 di Docker: immagine e contenitore, con il diario dei comandi. Il prossimo in programma è il 02 ([vedi l'indice](docker/README.md)).
+Ho fatto gli esercizi 01 e 02 di Docker: immagine e contenitore, e come avviarli, vederli e fermarli, con il diario dei comandi. Il prossimo in programma è il 03 ([vedi l'indice](docker/README.md)).
