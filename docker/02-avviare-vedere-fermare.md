@@ -200,7 +200,6 @@ Status: Downloaded newer image for docker/welcome-to-docker:latest
   - Il nuovo `prova-02` ha un ID diverso dal primo (`c87d8aa8b255` invece di `e68c5d2b825c`), pur avendo lo stesso nome.
   - `docker rm prova-02` su un contenitore in esecuzione dà errore: `cannot remove container "prova-02": container is running: stop the container before removing or force remove`. Dopo l'errore, `docker ps` mostra `prova-02` ancora `Up`.
   - `docker rm --force prova-02` risponde `prova-02`, e `docker ps -a` non lo mostra più.
-- Previsioni mie: la prima (serve `--force`) giusta, ma l'errore indica anche l'altra strada, fermare prima il contenitore. La seconda (con `--force` viene eliminato) giusta.
 
 ## Fonti
 - [docker container run](https://docs.docker.com/reference/cli/docker/container/run/)
