@@ -96,12 +96,9 @@ solo a capire la differenza tra "chiedere di fermarsi" e "forzare".
 
 ## Domande aperte (le pagine non le spiegano, le provo)
 
-- Cosa succede se provo a eliminare con `docker rm` un contenitore in esecuzione, senza
-  `--force`? La pagina non lo dice.
-- Come appare nella colonna STATUS un contenitore fermato? La pagina elenca gli stati ma,
-  nella parte letta, non mostra la riga di un contenitore `exited`: lo vedo al passo 5.
-- Cosa significano le altre colonne di `docker ps` (COMMAND, CREATED, PORTS)? Nell'esempio
-  compaiono ma la pagina non le definisce.
+- Cosa succede se provo a eliminare con `docker rm` un contenitore in esecuzione, senza `--force`? La pagina non lo dice. **Risposta:** dà errore e il contenitore resta `Up` (passo 7; vedi «Cosa ho verificato»).
+- Come appare nella colonna STATUS un contenitore fermato? La pagina elenca gli stati ma, nella parte letta, non mostra la riga di un contenitore `exited`. **Risposta:** `Exited (0) About a minute ago` (passo 5).
+- Cosa significano le altre colonne di `docker ps` (COMMAND, CREATED, PORTS)? Nell'esempio compaiono ma la pagina non le definisce. **Risposta in parte:** `PORTS` mostra le porte pubblicate (verificato nell'esercizio 03); il `…` di COMMAND è una deduzione; `CREATED` resta aperta (vedi «Domande aperte» in fondo al file).
 
 ## Dalla documentazione (parole originali)
 - `docker run`: "The `docker run` command runs a command in a new container, pulling the image if needed and starting the container."
@@ -201,16 +198,6 @@ Status: Downloaded newer image for docker/welcome-to-docker:latest
   - `docker rm prova-02` su un contenitore in esecuzione dà errore: `cannot remove container "prova-02": container is running: stop the container before removing or force remove`. Dopo l'errore, `docker ps` mostra `prova-02` ancora `Up`.
   - `docker rm --force prova-02` risponde `prova-02`, e `docker ps -a` non lo mostra più.
 
-## Fonti
-- [docker container run](https://docs.docker.com/reference/cli/docker/container/run/)
-- [docker container ls](https://docs.docker.com/reference/cli/docker/container/ls/)
-- [docker container logs](https://docs.docker.com/reference/cli/docker/container/logs/)
-- [docker container stop](https://docs.docker.com/reference/cli/docker/container/stop/)
-- [docker container rm](https://docs.docker.com/reference/cli/docker/container/rm/)
-- [docker image pull](https://docs.docker.com/reference/cli/docker/image/pull/)
-- [Running containers](https://docs.docker.com/engine/containers/run/)
-- [What is a container?](https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/)
-
 ## Dopo l'esercizio
 
 ### Cosa ho fatto
@@ -248,3 +235,13 @@ Status: Downloaded newer image for docker/welcome-to-docker:latest
 - Cosa significa `(healthy)`? (esercizio 05)
 - Perché `CREATED` e `Up` sono diversi per i contenitori di Orarium?
 - Cosa fa l'opzione `-v, --volumes` di `docker rm`? (da vedere quando parliamo di dati)
+
+## Fonti
+- [docker container run](https://docs.docker.com/reference/cli/docker/container/run/)
+- [docker container ls](https://docs.docker.com/reference/cli/docker/container/ls/)
+- [docker container logs](https://docs.docker.com/reference/cli/docker/container/logs/)
+- [docker container stop](https://docs.docker.com/reference/cli/docker/container/stop/)
+- [docker container rm](https://docs.docker.com/reference/cli/docker/container/rm/)
+- [docker image pull](https://docs.docker.com/reference/cli/docker/image/pull/)
+- [Running containers](https://docs.docker.com/engine/containers/run/)
+- [What is a container?](https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/)
