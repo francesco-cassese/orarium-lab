@@ -7,7 +7,7 @@ Comandi usati finora: [diario dei comandi](comandi.md).
 - [x] [01 - Immagine e contenitore](01-immagine-e-contenitore.md)
 - [x] [02 - Avviare, vedere e fermare un contenitore](02-avviare-vedere-fermare.md)
 - [x] [03 - Porte e volumi](03-porte-e-volumi.md)
-- [ ] 04 - Un `compose.yaml` con un servizio
+- [x] [04 - Compose: un servizio](04-compose-un-servizio.md)
 - [ ] 05 - Variabili d'ambiente e `healthcheck`
 - [ ] 06 - Due servizi con `depends_on`
 - [ ] 07 - Il `compose.yaml` di Orarium spiegato riga per riga
