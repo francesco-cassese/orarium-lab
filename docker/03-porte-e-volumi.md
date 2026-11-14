@@ -112,7 +112,7 @@ Tutti i nomi di contenitori e volumi creati qui cominciano per `prova-`. Non si 
 - Comando: `docker volume ls`
 - Cosa guardare: i nomi dei volumi che ci sono già. Non toccarli.
 - Cosa ho visto: ci sono 4 volumi, tutti di tipo `local`. Due hanno nomi lunghi 64 caratteri esadecimali: sembrano anonimi, visto il nome casuale, ma non so di chi siano. Gli altri due sono `orarium_mysql_data` e `orarium_redis_data`: hanno gli stessi nomi del `compose.yaml` con il prefisso `orarium_`, e non so perché.
-- Domanda aperta: da dove viene il prefisso `orarium_`?
+- Domanda aperta: da dove viene il prefisso `orarium_`? (risposta nell'esercizio 04, vedi «Cosa ho verificato»)
 
 ### Passo 3: creare un volume di prova
 - Comando: `docker volume create prova-volume`
@@ -148,6 +148,8 @@ Tutti i nomi di contenitori e volumi creati qui cominciano per `prova-`. Non si 
 - Azione (non è un comando): apri `http://127.0.0.1:8080` nel browser.
 - Cosa guardare: se la pagina risponde.
 - Cosa ho visto: la pagina di benvenuto di Docker, con «Congratulations!!! You ran your first container.» e dei coriandoli. La porta pubblicata risponde dal mio computer, all'indirizzo `127.0.0.1:8080`. Non ho provato da un altro dispositivo.
+
+![Pagina di benvenuto di Docker su 127.0.0.1:8080](img/congratulations.png)
 
 ### Passo 10: ispezionare le porte
 - Comando: `docker container inspect prova-web --format "{{json .NetworkSettings.Ports}}"`
@@ -188,6 +190,7 @@ Tredici passi con `prova-volume`, `prova-web` e due contenitori usa e getta con 
 - Il `compose.yaml` dichiara per il database un volume con nome, `mysql_data` (passo 1), ed esiste un volume `orarium_mysql_data` (passo 2). Non ho verificato che il contenitore usi proprio quello: lo si vedrebbe con `docker inspect` sul contenitore, sezione `Mounts` (come nella pagina dei volumi).
 - `:ro` alla fine di una riga di `volumes` vuol dire sola lettura: è l'opzione `readonly, ro` della pagina dei volumi (sezione «Options for --volume»).
 - `sh -c` e `cat` funzionano in `alpine`.
+- Il prefisso `orarium_` dei volumi è il nome del progetto Compose, che di default è il nome della cartella: per Orarium `docker compose ls` mostra il progetto `orarium` (esercizio 04, passo 1), e un volume nuovo si chiama `<progetto>_<nome>`, per esempio `prova-compose_dati` (esercizio 04, passo 10). La pagina «Specify a project name» non dice che il nome vada davanti ai volumi: lo so dalla prova.
 
 ### Cosa ho dedotto e non ancora verificato
 - Penso che dagli altri dispositivi la porta non risponda, ma non l'ho provato.
@@ -200,8 +203,7 @@ Tredici passi con `prova-volume`, `prova-web` e due contenitori usa e getta con 
 ### Domande aperte
 - Cosa vuol dire `Exited (255)`, a differenza di `Exited (0)`?
 - Perché `PORTS` è vuota per un contenitore fermato con `docker stop`, ma piena per i contenitori di Orarium, che risultano fermi ma hanno ancora le porte?
-- Perché Compose aggiunge il prefisso `orarium_`?
-- A cosa serve la porta `33060/tcp`?
+- A cosa serve la porta `33060/tcp`? Nel passo 8 l'avevo vista con `docker ps -a`, quando `orarium-db-1` era `Exited`. Ora che il contenitore è in esecuzione, `docker ps -a` mostra solo `127.0.0.1:3307->3306/tcp`, e `33060/tcp` non compare più. Non so ancora perché.
 - La mia versione di Docker è precedente alla 28.0.0? (si vede con `docker version`)
 
 ### Applicazione in Orarium
