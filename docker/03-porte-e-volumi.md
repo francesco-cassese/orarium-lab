@@ -204,6 +204,11 @@ Tredici passi con `prova-volume`, `prova-web` e due contenitori usa e getta con 
 - A cosa serve la porta `33060/tcp`?
 - La mia versione di Docker è precedente alla 28.0.0? (si vede con `docker version`)
 
+### Applicazione in Orarium
+
+- [PR #87](https://github.com/francesco-cassese/orarium/pull/87), `docs(backend): explain where the data lives and the prune risk`: ho aggiunto al `backend/README.md` dove stanno i dati del database e di Redis (i volumi `mysql_data` e `redis_data`) e un avviso sul rischio di `docker volume prune --all`.
+- Prima di scriverla ho riavviato i servizi con `docker compose up -d`, e `php artisan migrate:status` mostrava le quattro migrazioni `Ran`: i dati erano rimasti nel volume.
+
 ## Fonti
 
 - [Port publishing and mapping](https://docs.docker.com/engine/network/port-publishing/)
