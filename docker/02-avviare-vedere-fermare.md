@@ -235,10 +235,11 @@ Status: Downloaded newer image for docker/welcome-to-docker:latest
 - Le immagini di `orarium-db-1` e `orarium-redis-1` in `docker ps` coincidono con quelle del `compose.yaml` (`mysql:8.4.13` e `redis:8.2.6`).
 - `docker ps` mostra solo i contenitori in esecuzione: la pagina di `docker container ls` dice, nell'opzione `-a, --all`, `Show all containers (default shows just running)`. L'ho visto anche di persona: `prova-02` fermo compare solo con `docker ps -a`.
 - `docker rm --force` rimuove un contenitore in esecuzione usando `SIGKILL`: pagina di `docker container rm`, opzione `-f, --force`. L'ho provato di persona: senza `--force` il comando dà errore e il contenitore resta `Up`, con `--force` viene cancellato.
+- Nel flag `-p` l'ordine è `porta del computer:porta del contenitore`: la pagina Port publishing and mapping (sezione «Publishing ports», tabella) dice «-p 8080:80 — Map port 8080 on the Docker host to TCP port 80 in the container.» (verificato nell'esercizio 03).
+- `docker ps` mostra una porta pubblicata come `porta del computer->porta del contenitore`: nell'esercizio 03 ho scritto `-p 127.0.0.1:8080:80` e ho visto `127.0.0.1:8080->80/tcp`. La pagina non descrive il formato di `docker ps`: lo so dalla prova.
+- `prova-02` mostra `80/tcp` senza `->` perché l'ho avviata senza `-p`, cioè la porta non è pubblicata (la pagina dice che le porte non pubblicate sono bloccate dall'esterno). Lo stesso succede a `33060/tcp` di `orarium-db-1` (esercizio 03, passo 8).
 
 ### Cosa ho dedotto e non ancora verificato
-- Il formato `porta del computer -> porta del contenitore` lo ricavo dall'esempio `8080:80` di `-p`; la pagina non lo spiega.
-- `prova-02` non ha `->` perché non è collegato a nessuna porta del computer.
 - Il `…` nella colonna `COMMAND` di `docker ps` sembra un taglio del testo: l'opzione `--no-trunc` dice `Don't truncate output`, ma la pagina non dice che sia proprio quello.
 
 ### Domande aperte
