@@ -197,6 +197,11 @@ Ho costruito un progetto di prova, `prova-compose`, con un solo servizio `web` e
 - I due volumi con nome lungo (`2d43ed70…` e `a385f5a4…`) esistono, come visto con `docker volume ls` al passo 10, ma non so di chi siano.
 - Perché `docker compose ls` mostra due volte lo stesso file di configurazione, una volta con `desktop` e una volta con `Desktop`? Ipotesi: è lo stesso file scritto con le maiuscole diverse, ma non l'ho verificato. Altra traccia: per `prova-compose` il file compare una sola volta, mentre per `orarium` compare due volte. Non so ancora spiegare la differenza.
 
+### Applicazione in Orarium
+
+- [PR #88](https://github.com/francesco-cassese/orarium/pull/88), `docs(backend): name the Docker volumes and explain the prefix`: ho riscritto nel `backend/README.md` la riga sui volumi, con i nomi veri (`orarium_mysql_data`, `orarium_redis_data`) e il motivo del prefisso: Compose mette davanti il nome del progetto, che di default è il nome della cartella.
+- Prima di scriverla ho controllato con `docker compose ls` che il progetto di Orarium si chiama `orarium` (esercizio 04, passo 1) e con `docker volume ls` i nomi dei volumi (passo 10).
+
 ## Fonti
 
 - [How Compose works](https://docs.docker.com/compose/intro/compose-application-model/)
