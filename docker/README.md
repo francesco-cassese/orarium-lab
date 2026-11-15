@@ -8,6 +8,6 @@ Comandi usati finora: [diario dei comandi](comandi.md).
 - [x] [02 - Avviare, vedere e fermare un contenitore](02-avviare-vedere-fermare.md)
 - [x] [03 - Porte e volumi](03-porte-e-volumi.md)
 - [x] [04 - Compose: un servizio](04-compose-un-servizio.md)
-- [ ] 05 - Variabili d'ambiente e `healthcheck`
+- [x] [05 - Variabili d'ambiente e healthcheck](05-variabili-e-healthcheck.md)
 - [ ] 06 - Due servizi con `depends_on`
 - [ ] 07 - Il `compose.yaml` di Orarium spiegato riga per riga

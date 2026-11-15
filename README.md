@@ -18,4 +18,4 @@ Orarium è il progetto a cui mi serve tutto questo: un'app per pianificare produ
 
 ## Stato
 
-Ho fatto gli esercizi 01, 02, 03 e 04 di Docker: immagine e contenitore, come avviarli, vederli e fermarli, porte e volumi, e Compose con un servizio, con il diario dei comandi. Il prossimo in programma è il 05 ([vedi l'indice](docker/README.md)).
+Ho fatto gli esercizi 01, 02, 03, 04 e 05 di Docker: immagine e contenitore, come avviarli, vederli e fermarli, porte e volumi, Compose con un servizio, variabili d'ambiente e healthcheck, con il diario dei comandi. Il prossimo in programma è il 06 (due servizi con `depends_on`, [vedi l'indice](docker/README.md)).
