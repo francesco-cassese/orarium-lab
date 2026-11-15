@@ -52,6 +52,20 @@ Pagina «Set, use, and manage variables in a Compose file with interpolation»:
 
 > If an environment variable is not set, Compose substitutes with an empty string.
 
+Pagina «Interpolation»:
+
+> "You can use a `$$` (double-dollar sign) when your configuration needs a literal dollar sign."
+
+Traduzione: puoi usare `$$` quando la configurazione ha bisogno di un dollaro letterale.
+
+> "This also prevents Compose from interpolating a value, so a `$$` allows you to refer to environment variables that you don't want processed by Compose."
+
+Traduzione: questo impedisce anche a Compose di sostituire il valore, quindi `$$` ti permette di indicare variabili che non vuoi far elaborare da Compose.
+
+> "If Compose can't resolve a substituted variable and no default value is defined, it displays a warning and substitutes the variable with an empty string."
+
+Traduzione: se Compose non riesce a risolvere una variabile e non c'è un valore predefinito, mostra un avviso e sostituisce la variabile con una stringa vuota.
+
 Pagina «Set environment variables within your container's environment»:
 
 > A container's environment is not set until there's an explicit entry in the service configuration to make this happen.
@@ -114,7 +128,7 @@ Quanto tempo ci vuole non lo so con precisione. Deduco che, con controlli ogni 1
 
 **Cosa dice la pagina:** il primo elemento della lista deve essere `NONE`, `CMD` o `CMD-SHELL`. Se `test` è una stringa, vale come `CMD-SHELL` con quella stringa. `CMD-SHELL` fa girare il comando con la shell del contenitore (`/bin/sh` su Linux).
 
-**Cosa deduco:** con `CMD` il programma parte direttamente, senza shell. Per `db` uso quindi una stringa, cioè `CMD-SHELL`, perché il comando contiene `$$MYSQL_ROOT_PASSWORD`. La variabile va letta dalla shell del contenitore, e con `CMD` non ci sarebbe nessuna shell a espanderla. Il `$$` serve a dire a Compose di non sostituirla lui. Visto con una prova, non letto sulla pagina: con un solo `$` (`echo $SALUTO`) `config` mostra `echo ciao`, quindi Compose sostituisce la variabile da solo. Per `redis` il comando `redis-cli ping` non ha variabili né pipe, quindi basta lanciarlo direttamente con `CMD` e una lista. Non l'ho provato togliendo la shell da `db`.
+**Cosa deduco:** con `CMD` il programma parte direttamente, senza shell. Per `db` uso quindi una stringa, cioè `CMD-SHELL`, perché il comando contiene `$$MYSQL_ROOT_PASSWORD`. La variabile va letta dalla shell del contenitore, e con `CMD` non ci sarebbe nessuna shell a espanderla. Il `$$` serve a dire a Compose di non sostituirla lui. Visto con una prova, non letto sulla pagina: con un solo `$` (`echo $SALUTO`) `config` mostra `echo ciao`, quindi Compose sostituisce la variabile da solo. La pagina Interpolation, trovata dopo l'esercizio, lo conferma (vedi «Dopo l'esercizio»). Per `redis` il comando `redis-cli ping` non ha variabili né pipe, quindi basta lanciarlo direttamente con `CMD` e una lista. Non l'ho provato togliendo la shell da `db`.
 
 ## Esercizio: la traccia
 
@@ -204,9 +218,11 @@ Ho lavorato in due cartelle di prova. In `prova-variabili` ho provato il `.env` 
 ### Cosa ho verificato
 
 - Compose sostituisce `${SALUTO}` con il valore del `.env` (passo 2).
-- Se la variabile manca nel `.env`, Compose stampa un avviso e usa una stringa vuota (passo 5).
+- Se la variabile manca nel `.env`, Compose stampa un avviso e usa una stringa vuota (passo 5). La pagina Interpolation lo dice così: «If Compose can't resolve a substituted variable and no default value is defined, it displays a warning and substitutes the variable with an empty string.»
 - Una variabile impostata nella shell vince sul `.env` (passo 6).
 - Con `$$SALUTO` il contenitore stampa `ciao` (passo 3), in `COMMAND` compare `$SALUTO` (passo 4), e con un solo `$` la sostituzione la fa Compose (passo 7).
+- L'esempio della pagina Interpolation, `command: "$$VAR_NOT_INTERPOLATED_BY_COMPOSE"`, corrisponde ai passi 2–4: usa `$$`.
+- La pagina Interpolation dice che `$VARIABLE` e `${VARIABLE}` sono entrambi supportati: copre il passo 7, con un solo `$`.
 - Quando cambio la configurazione, il contenitore viene ricreato: al passo 7 il messaggio dice `Recreated`. Non sempre lo dice: al passo 13 era `Started`, ma il contenitore risultava ricreato (`CREATED` di 25 secondi).
 - `.env` e `backend/.env` sono ignorati da Git (passo 9).
 - Lo stato passa da `starting` a `healthy` (passo 11), e nel `Log` di `State.Health` ci sono `ExitCode` e `Output` (passo 12).
@@ -223,7 +239,6 @@ Ho lavorato in due cartelle di prova. In `prova-variabili` ho provato il `.env` 
 
 ### Domande aperte
 
-- Dove sta scritto il `$$` nella documentazione (Compose Specification)?
 - Secrets o variabili d'ambiente per Orarium?
 - `--env-file` e una variabile senza valore (`- VAR` in `environment`) non le ho provate.
 - Perché `orarium-db-1` e `orarium-redis-1` sono `Exited (255)`.
@@ -242,6 +257,7 @@ Ho lavorato in due cartelle di prova. In `prova-variabili` ho provato il `.env` 
 
 ## Fonti
 
+- [Interpolation](https://docs.docker.com/reference/compose-file/interpolation/)
 - [Set, use, and manage variables in a Compose file with interpolation](https://docs.docker.com/compose/how-tos/environment-variables/variable-interpolation/)
 - [Set environment variables within your container's environment](https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/)
 - [Define services in Docker Compose](https://docs.docker.com/reference/compose-file/services/)
