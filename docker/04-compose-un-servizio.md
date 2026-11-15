@@ -181,14 +181,14 @@ Ho costruito un progetto di prova, `prova-compose`, con un solo servizio `web` e
 - Il nome del progetto è quello della cartella, se non lo cambio: `prova-compose` dalla cartella `prova-compose` (passo 6), `orarium` dalla cartella `orarium` (passo 1).
 - Il nome del progetto va davanti a contenitori, volumi e reti: `prova-compose-web-1` (passo 5), `prova-compose_dati` (passo 10), `prova-compose_default` (passo 7).
 - `up -d` lanciato due volte: la seconda volta l'output è solo `Container prova-compose-web-1 Running`, e `CREATED` resta `9 minutes ago` (passo 9).
-- Cosa succede al contenitore quando cambia il file: dopo la modifica, `CREATED` passa da `9 minutes ago` a `About a minute ago`, quindi il contenitore è stato ricreato (passo 10, `docker compose ps`).
+- Cosa succede al contenitore quando cambia il file: dopo la modifica, `CREATED` passa da `9 minutes ago` a `About a minute ago`, quindi il contenitore è stato ricreato (passo 10, `docker compose ps`). La causa è confermata: nell'esercizio 05, passo 7, cambiando solo il comando il messaggio è stato `Recreated`.
+- Il messaggio non sempre dice `Recreated`: al passo 13 dell'esercizio 05 era `Started`, ma `CREATED` mostrava un contenitore nuovo. Per sapere se è stato ricreato guardo `CREATED`, non solo il messaggio.
 - `down` e `down -v`: `down` rimuove contenitore e rete e lascia il volume (passo 11); `down -v` con `-p altro` rimuove anche il volume `altro_dati` (passo 13).
 - `-p` contro il nome della cartella: con `-p altro` il progetto e i nomi sono `altro`, anche se la cartella è `prova-compose` (passi 12 e 6).
 
 ### Cosa ho dedotto e non ancora verificato
 
 - Il volume è montato su `/dati`: il file lo dichiara, ma non ho controllato dentro il contenitore (passo 10). Per verificarlo servirebbe `docker container inspect`, sezione `Mounts`.
-- Il contenitore è stato ricreato perché il file era cambiato: è la mia ipotesi, non l'ho provata con un confronto.
 - Il secondo `up -d` non nomina la rete perché la rete esiste già e non è cambiato niente: è la mia ipotesi. L'output dice solo che il contenitore è in esecuzione (passo 9).
 
 ### Domande aperte
