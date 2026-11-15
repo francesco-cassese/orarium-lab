@@ -185,7 +185,7 @@ Status: Downloaded newer image for docker/welcome-to-docker:latest
 - Cosa ho visto: due contenitori, `orarium-db-1` e `orarium-redis-1`, entrambi `Up 3 days (healthy)`. `prova-02` non c'è più.
 - Comando: `docker ps -a`
 - Cosa ho visto: `prova-02` compare con `STATUS` `Exited (0) About a minute ago`, creato 16 minuti fa, colonna `PORTS` vuota. I due contenitori di Orarium sono sempre `Up 3 days (healthy)`.
-- Domanda aperta: cosa significa lo `0` in `Exited (0)`?
+- Domanda aperta: cosa significa lo `0` in `Exited (0)`? Caso concreto nell'esercizio 05, passo 3: `prova-variabili-eco-1` è uscito con `exited with code 0` da solo. Osservazione, non ancora spiegata: la spiegazione sulla pagina `docker container run` non l'abbiamo letta.
 
 ### Passo 6: cancellare
 - Comando: `docker rm prova-02`, poi `docker ps -a`
@@ -226,6 +226,7 @@ Status: Downloaded newer image for docker/welcome-to-docker:latest
 - `docker ps` mostra una porta pubblicata come `porta del computer->porta del contenitore`: nell'esercizio 03 ho scritto `-p 127.0.0.1:8080:80` e ho visto `127.0.0.1:8080->80/tcp`. La pagina non descrive il formato di `docker ps`: lo so dalla prova.
 - `prova-02` mostra `80/tcp` senza `->` perché l'ho avviata senza `-p`, cioè la porta non è pubblicata (la pagina dice che le porte non pubblicate sono bloccate dall'esterno). Lo stesso succede a `33060/tcp` di `orarium-db-1` (esercizio 03, passo 8).
 - `CREATED` è il momento in cui il contenitore è stato creato, `Up` conta da quando è stato avviato l'ultima volta: riavviando Orarium con `docker compose up -d` ho visto `CREATED` `9 days ago` e `Up 18 seconds` (visto con una prova; la pagina non lo spiega).
+- Nella colonna `STATUS` `(healthy)` compare quando il controllo del `healthcheck` passa. Subito dopo l'avvio c'è `(health: starting)`; con un test che fallisce diventa `(unhealthy)`. Visto nell'esercizio 05, passi 11, 13 e 14; i contenitori di Orarium `Up 3 days (healthy)` di questo esercizio sono l'esempio di prima.
 
 ### Cosa ho dedotto e non ancora verificato
 - Il `…` nella colonna `COMMAND` di `docker ps` sembra un taglio del testo: l'opzione `--no-trunc` dice `Don't truncate output`, ma la pagina non dice che sia proprio quello.
@@ -233,7 +234,6 @@ Status: Downloaded newer image for docker/welcome-to-docker:latest
 ### Domande aperte
 - Cosa significa lo `0` in `Exited (0)`?
 - Perché 12 processi nginx?
-- Cosa significa `(healthy)`? (esercizio 05)
 - Cosa fa l'opzione `-v, --volumes` di `docker rm`? (da vedere quando parliamo di dati)
 
 ## Fonti
