@@ -205,7 +205,7 @@ Ho costruito un progetto di prova, `prova-compose`, con un solo servizio `web` e
 
 ### Domande aperte
 
-- 33060/tcp non compare più: al passo 11 `docker ps -a` mostra solo `127.0.0.1:3307->3306/tcp` per `orarium-db-1`. Nel 03 l'avevo annotata con il contenitore `Exited`. Il perché non lo so.
+- 33060/tcp non compare più: al passo 11 `docker ps -a` mostra solo `127.0.0.1:3307->3306/tcp` per `orarium-db-1`. Nel 03 l'avevo annotata con il contenitore `Exited`. Il perché non lo so. Ora la differenza tra `Exited` e `Up` l'ho vista sullo stesso contenitore (esercizio 05), e l'immagine dichiara quella porta.
 - I due volumi con nome lungo (`2d43ed70…` e `a385f5a4…`) esistono, come visto con `docker volume ls` al passo 10, ma non so di chi siano.
 - Perché `docker compose ls` mostra due volte lo stesso file di configurazione, una volta con `desktop` e una volta con `Desktop`? Ipotesi: è lo stesso file scritto con le maiuscole diverse, ma non l'ho verificato. Altra traccia: per `prova-compose` il file compare una sola volta, mentre per `orarium` compare due volte. Non so ancora spiegare la differenza.
 

@@ -230,6 +230,8 @@ Ho lavorato in due cartelle di prova. In `prova-variabili` ho provato il `.env` 
 - `docker inspect` mostra le variabili d'ambiente del contenitore nel campo `Config.Env` (visto con `prova-variabili-eco-1`, valore finto `SALUTO=ciao`; il campo l'ho letto con `--format`). Su Orarium non l'ho provato.
 - Con un test che fallisce, il contenitore diventa `unhealthy` dopo circa 17 secondi misurati (passo 13), mentre resta `Up` e i fallimenti salgono a 32 (passo 14).
 - L'immagine `redis:8.2.6` dichiara la porta `6379/tcp`: `docker image inspect redis:8.2.6 --format "{{json .Config.ExposedPorts}}"` restituisce `{"6379/tcp":{}}`. È la porta che `PORTS` mostra senza freccia (passo 11).
+- L'immagine `mysql:8.4.13` dichiara `3306/tcp` e `33060/tcp`, con il comando `docker image inspect mysql:8.4.13 --format "{{json .Config.ExposedPorts}}"`. Con `orarium-db-1` fermo `PORTS` mostra `33060/tcp` e `127.0.0.1:3307->3306/tcp`; da `Up` mostra solo `127.0.0.1:3307->3306/tcp`. Il perché della differenza resta aperto.
+- Il 15 novembre alle 15:55 ho riavviato `orarium-db-1`: `healthy` dopo 56 secondi, con un `Log` nuovo. Il `Log` ha 5 controlli, tutti con `ExitCode: 0`, con inizi alle 14:55:33, 14:55:44, 14:55:54, 14:56:04 e 14:56:15 UTC (cioè 15:55–15:56 ora locale). Le distanze sono di circa 10 o 11 secondi.
 
 ### Cosa ho dedotto e non ancora verificato
 
@@ -244,8 +246,8 @@ Ho lavorato in due cartelle di prova. In `prova-variabili` ho provato il `.env` 
 - Secrets o variabili d'ambiente per Orarium?
 - `--env-file` e una variabile senza valore (`- VAR` in `environment`) non le ho provate.
 - Perché `orarium-db-1` e `orarium-redis-1` sono `Exited (255)`.
-- Perché il `Log` di `orarium-db-1` è del 5 novembre e lo stato è `starting`.
-- Perché alcune distanze tra i controlli sono diverse dall'`interval`: 5,9 s invece di 5 nel Redis di prova (più lunga), 9,1 s invece di 10 nel database di Orarium (più corta).
+- Perché nel passo 16 `Status` era `starting` con un `Log` del 5 novembre, mentre dopo il riavvio del 15 novembre il `Log` è nuovo?
+- Perché alcune distanze tra i controlli sono diverse dall'`interval`: 5,9 s invece di 5 nel Redis di prova (più lunga), 9,1 s invece di 10 nel database di Orarium (più corta). La variazione è di circa un secondo rispetto all'`interval`.
 - Cosa fa Docker con un contenitore `unhealthy`, oltre a mostrare l'etichetta: l'ho visto solo per circa due minuti e mezzo.
 
 ### Applicazione in Orarium
