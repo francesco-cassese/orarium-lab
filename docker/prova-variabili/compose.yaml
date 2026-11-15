@@ -1,0 +1,6 @@
+services:
+  eco:
+    image: alpine
+    environment:
+      SALUTO: ${SALUTO}
+    command: ["sh", "-c", "echo $$SALUTO"]
