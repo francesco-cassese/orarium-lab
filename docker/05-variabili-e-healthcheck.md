@@ -229,6 +229,7 @@ Ho lavorato in due cartelle di prova. In `prova-variabili` ho provato il `.env` 
 - Il `Log` tiene solo le ultime 5 voci (passo 14).
 - `docker inspect` mostra le variabili d'ambiente del contenitore nel campo `Config.Env` (visto con `prova-variabili-eco-1`, valore finto `SALUTO=ciao`; il campo l'ho letto con `--format`). Su Orarium non l'ho provato.
 - Con un test che fallisce, il contenitore diventa `unhealthy` dopo circa 17 secondi misurati (passo 13), mentre resta `Up` e i fallimenti salgono a 32 (passo 14).
+- L'immagine `redis:8.2.6` dichiara la porta `6379/tcp`: `docker image inspect redis:8.2.6 --format "{{json .Config.ExposedPorts}}"` restituisce `{"6379/tcp":{}}`. È la porta che `PORTS` mostra senza freccia (passo 11).
 
 ### Cosa ho dedotto e non ancora verificato
 
@@ -236,6 +237,7 @@ Ho lavorato in due cartelle di prova. In `prova-variabili` ho provato il `.env` 
 - Il tempo per diventare `unhealthy` per `db` è circa 100 secondi (risposta 6).
 - Togliere la shell da `db` e usare `CMD` farebbe fallire il controllo.
 - Il motivo per cui al passo 13 il primo `up -d` ha risposto `Running` è che il file non era stato salvato: è solo un'ipotesi.
+- `PORTS` mostra le porte dichiarate dall'immagine anche quando non sono pubblicate. È coerente con `80/tcp` di `prova-02` nell'esercizio 02, ma non l'ho letto su una pagina.
 
 ### Domande aperte
 
@@ -245,7 +247,6 @@ Ho lavorato in due cartelle di prova. In `prova-variabili` ho provato il `.env` 
 - Perché il `Log` di `orarium-db-1` è del 5 novembre e lo stato è `starting`.
 - Perché alcune distanze tra i controlli sono diverse dall'`interval`: 5,9 s invece di 5 nel Redis di prova (più lunga), 9,1 s invece di 10 nel database di Orarium (più corta).
 - Cosa fa Docker con un contenitore `unhealthy`, oltre a mostrare l'etichetta: l'ho visto solo per circa due minuti e mezzo.
-- Cosa indica `6379/tcp` senza freccia in `PORTS`.
 
 ### Applicazione in Orarium
 
