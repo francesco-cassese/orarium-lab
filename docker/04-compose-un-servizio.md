@@ -12,7 +12,7 @@ Un paragone dal laboratorio di pasticceria: è la differenza tra dettare a voce 
 
 Nell'esempio della pagina il file ha due parti principali:
 
-- `services:`: l'elenco dei **servizi**. Ogni servizio parte da un'immagine (`image:`) e può avere porte (`ports:`) e volumi (`volumes:`).
+- `services:`: l'elenco dei **servizi**. Un servizio è una definizione astratta: i contenitori che lo realizzano sono quelli di cui parla la pagina («Services are backed by a set of containers»), vedi la citazione più sotto. Ogni servizio parte da un'immagine (`image:`) e può avere porte (`ports:`) e volumi (`volumes:`).
 - `volumes:` in cima al file, fuori dai servizi: dichiara i volumi con nome.
 
 Le righe dell'esempio ricalcano quello che ho fatto a mano nell'esercizio 03:
@@ -73,6 +73,18 @@ Pagina «Specify a project name»:
 > Compose uses a project name to isolate environments from each other.
 
 > The precedence order for each method, from highest to lowest, is as follows: 1. The `-p` command line flag. 2. The COMPOSE_PROJECT_NAME environment variable. 3. The top-level `name:` attribute in your Compose file. [...] 4. The base name of the project directory containing your Compose file. [...]
+
+### Il servizio
+
+Pagina «Define services in Docker Compose»:
+
+> A service is an abstract definition of a computing resource within an application which can be scaled or replaced independently from other components.
+
+Traduzione: un servizio è una definizione astratta di una risorsa di calcolo dentro un'applicazione, che si può scalare o sostituire senza toccare gli altri componenti.
+
+> Services are backed by a set of containers, run by the platform according to replication requirements and placement constraints.
+
+Traduzione: i servizi sono realizzati da un insieme di contenitori, che la piattaforma fa girare secondo i requisiti di replica e i vincoli di posizionamento.
 
 ## Con parole mie
 
@@ -206,3 +218,4 @@ Ho costruito un progetto di prova, `prova-compose`, con un solo servizio `web` e
 
 - [How Compose works](https://docs.docker.com/compose/intro/compose-application-model/)
 - [Specify a project name](https://docs.docker.com/compose/how-tos/project-name/)
+- [Define services in Docker Compose](https://docs.docker.com/reference/compose-file/services/)
