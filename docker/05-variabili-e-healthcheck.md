@@ -211,12 +211,12 @@ Ho lavorato in due cartelle di prova. In `prova-variabili` ho provato il `.env` 
 - `.env` e `backend/.env` sono ignorati da Git (passo 9).
 - Lo stato passa da `starting` a `healthy` (passo 11), e nel `Log` di `State.Health` ci sono `ExitCode` e `Output` (passo 12).
 - Il `Log` tiene solo le ultime 5 voci (passo 14).
+- `docker inspect` mostra le variabili d'ambiente del contenitore nel campo `Config.Env` (visto con `prova-variabili-eco-1`, valore finto `SALUTO=ciao`; il campo l'ho letto con `--format`). Su Orarium non l'ho provato.
 - Con un test che fallisce, il contenitore diventa `unhealthy` dopo circa 17 secondi misurati (passo 13), mentre resta `Up` e i fallimenti salgono a 32 (passo 14).
 
 ### Cosa ho dedotto e non ancora verificato
 
 - I secrets sono più da configurare del necessario in locale (risposta 4).
-- La password si vedrebbe con `docker inspect`.
 - Il tempo per diventare `unhealthy` per `db` è circa 100 secondi (risposta 6).
 - Togliere la shell da `db` e usare `CMD` farebbe fallire il controllo.
 - Il motivo per cui al passo 13 il primo `up -d` ha risposto `Running` è che il file non era stato salvato: è solo un'ipotesi.
@@ -231,6 +231,14 @@ Ho lavorato in due cartelle di prova. In `prova-variabili` ho provato il `.env` 
 - Perché alcune distanze tra i controlli sono diverse dall'`interval`: 5,9 s invece di 5 nel Redis di prova (più lunga), 9,1 s invece di 10 nel database di Orarium (più corta).
 - Cosa fa Docker con un contenitore `unhealthy`, oltre a mostrare l'etichetta: l'ho visto solo per circa due minuti e mezzo.
 - Cosa indica `6379/tcp` senza freccia in `PORTS`.
+
+### Applicazione in Orarium
+
+- [PR #89](https://github.com/francesco-cassese/orarium/pull/89), `docs(backend): explain the Docker health states and how to read them`: senza issue, un solo file (`backend/README.md`), una riga modificata e una aggiunta (nel diff: 2 inserzioni, 1 cancellazione).
+- Nel README ho scritto i tre stati di salute che si vedono sotto `docker compose ps` (`starting`, `healthy`, `unhealthy`), e il comando `docker inspect --format "{{json .State.Health}}"` con l'avvertimento sulle password.
+- Perché: il punto 4 dell'avvio diceva già di aspettare `healthy`, ma non spiegava cosa significasse.
+- Fuori dal README, perché non serve a chi usa il progetto: i 17 secondi misurati, `Recreated` e le domande aperte.
+- Provato solo con un valore finto: le password in `docker inspect`. Non detto nel README perché non provato: cosa succede a `db` dopo `unhealthy`.
 
 ## Fonti
 
