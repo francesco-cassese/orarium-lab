@@ -122,30 +122,73 @@ solo a capire la differenza tra "chiedere di fermarsi" e "forzare".
 
 ## Con parole mie
 
-1. Cosa fa `docker run`? Cosa succede se l'immagine non è sul mio computer?
-   Risposta: `docker run` è il comando che prende un'immagine e la avvia, facendola diventare un container vivo. Se l'immagine che gli chiedo non c'è già sul mio computer, Docker non va in errore: si collega da solo a internet, la scarica (da Docker Hub, deduzione mia) e appena ha finito fa partire il container in automatico.
+### 1. Cosa fa `docker run`
+ 
+> Cosa fa `docker run`? Cosa succede se l'immagine non è sul mio computer?
+ 
+**Risposta:** `docker run` è il comando che prende un'immagine e la avvia, facendola diventare un contenitore vivo. Se l'immagine che gli chiedo non c'è già sul mio computer, Docker non va in errore: si collega da solo a internet, la scarica e appena ha finito fa partire il contenitore in automatico.
+ 
+- **Dalla pagina:** `docker run` esegue un comando in un nuovo contenitore, scaricando l'immagine se serve e avviando il contenitore (citazione sopra).
+- **Dedotto:** l'immagine viene scaricata da Docker Hub.
 
-2. A cosa serve l'opzione `-d`? Cosa cambierebbe senza?
-   Risposta: permette a docker di runnare il contenitore in background lasciando il terminale libero, senza -d occuperebbe il terminale.
+### 2. A cosa serve `-d`
+ 
+> A cosa serve l'opzione `-d`? Cosa cambierebbe senza?
+ 
+**Risposta:** `-d` permette a Docker di far girare il contenitore in background, lasciando il terminale libero; senza `-d` il contenitore occuperebbe il terminale.
+ 
+- **Dalla pagina:** `--detach` (o `-d`) avvia il contenitore come processo in background che non occupa la finestra del terminale (citazione sopra).
 
-3. Cosa mostra `docker ps`? E cosa aggiunge `-a`?
-   Risposta: `docker ps` mostra solo i contenitori attivi, se aggiungiamo `-a` sta per (- all) vengono mostrati tutti i contenitori presenti anche quelli non attivi.
+### 3. Cosa mostra `docker ps` e cosa aggiunge `-a`
+ 
+> Cosa mostra `docker ps`? E cosa aggiunge `-a`?
+ 
+**Risposta:** `docker ps` mostra solo i contenitori attivi; con `-a` (all) mostra tutti i contenitori presenti, anche quelli non attivi.
+ 
+- **Dalla pagina:** `docker ps` mostra per default solo i contenitori in esecuzione; `--all` mostra tutti i contenitori (citazioni sopra).
 
-4. A cosa serve `docker logs`? E `-f`?
-   Risposta: Mostra i log presenti al momento del lancio, e con l'aggiunta di `-f` continua a mostrarle anche dopo, man mano che vengono aggiunte.
+### 4. A cosa servono `docker logs` e `-f`
+ 
+> A cosa serve `docker logs`? E `-f`?
+ 
+**Risposta:** `docker logs` mostra i log presenti al momento del lancio; con `-f` continua a mostrarli anche dopo, man mano che vengono aggiunti.
+ 
+- **Dalla pagina:** `docker logs` recupera in blocco i log presenti al momento dell'esecuzione; con `--follow` continua a mostrare in streaming il nuovo output del contenitore (citazioni sopra).
 
-5. Cosa fa `docker stop` prima di fermare davvero un contenitore? E se il contenitore
-   non si ferma?
-   Risposta: `docker stop` manda prima `SIGTERM`, cioè chiede al programma di chiudersi. Aspetta il timeout (10 secondi per Linux, 30 per Windows). Se il contenitore non si è fermato, gli manda `SIGKILL` e lo ferma subito.
+### 5. Cosa fa `docker stop`
+ 
+> Cosa fa `docker stop` prima di fermare davvero un contenitore? E se il contenitore non si ferma?
+ 
+**Risposta:** `docker stop` manda prima `SIGTERM`, cioè chiede al programma di chiudersi, e aspetta il timeout. Se il contenitore non si è fermato, gli manda `SIGKILL` e lo ferma subito.
+ 
+- **Dalla pagina:** il processo principale riceve `SIGTERM` e, dopo un periodo di tolleranza, `SIGKILL`; se il contenitore non esce allo scadere del timeout, viene fermato con la forza con `SIGKILL`. Il valore predefinito lo decide il daemon: 10 secondi per i contenitori Linux, 30 per quelli Windows (citazioni sopra).
+- **Dedotto:** `SIGTERM` è la richiesta al programma di chiudersi: nelle citazioni sopra non è spiegato.
 
-6. Cosa fa `docker rm`? In quale caso serve `--force`?
-   Risposta: `docker rm` lo usiamo quando vogliamo eliminare uno o più contenitori, useremo `--force` per poter eliminare anche quello in esecuzione.
+### 6. Cosa fa `docker rm` e quando serve `--force`
+ 
+> Cosa fa `docker rm`? In quale caso serve `--force`?
+ 
+**Risposta:** `docker rm` si usa per eliminare uno o più contenitori; `--force` serve per poter eliminare anche un contenitore in esecuzione.
+ 
+- **Visto:** senza `--force`, `docker rm` su un contenitore in esecuzione dà errore e il contenitore resta `Up` (passo 7).
+- **Dalla pagina:** `docker rm` rimuove uno o più contenitori; `--force` forza la rimozione di un contenitore in esecuzione, con `SIGKILL` (citazione sopra).
 
-7. Perché ha senso dare un nome al contenitore con `--name` invece di usare l'ID?
-   Risposta: Il nome lo scelgo io, mentre l'ID lo genera Docker a caso: la pagina di `run` dice che, se non do un nome, il daemon ne assegna uno casuale. Con un nome riconosco il contenitore più facilmente. Questa è una mia deduzione.
+### 7. Perché dare un nome con `--name`
+ 
+> Perché ha senso dare un nome al contenitore con `--name` invece di usare l'ID?
+ 
+**Risposta:** il nome lo scelgo io, mentre l'ID lo genera Docker a caso. Con un nome riconosco il contenitore più facilmente.
+ 
+- **Dalla pagina:** la pagina di `run` dice che `--name` permette di scegliere un identificatore personalizzato e che, se non do un nome, il daemon ne assegna uno casuale, per esempio `vibrant_cannon` (citazioni sopra).
+- **Dedotto:** che l'ID sia generato a caso da Docker, e che con un nome riconosca il contenitore più facilmente, è una mia deduzione.
 
-8. Il paragone con il Task Manager: dove funziona e dove no?
-   Risposta: Funziona per "chiedere" e "forzare": docker stop è chiudere dalla finestra, docker rm --force è "Termina attività". Non funziona per i segnali, che sono cose del contenitore, né per docker ps -a, perché il Task Manager non mostra i programmi chiusi (osservazione mia).
+### 8. Il paragone con il Task Manager
+ 
+> Il paragone con il Task Manager: dove funziona e dove no?
+ 
+**Risposta:** funziona per «chiedere» e «forzare»: `docker stop` è chiudere dalla finestra, `docker rm --force` è «Termina attività». Non funziona per i segnali, che sono cose del contenitore, né per `docker ps -a`, perché il Task Manager non mostra i programmi chiusi.
+ 
+- **Dedotto:** è un'osservazione mia, non viene da una pagina.
 
 ## Esercizio: la traccia
 
