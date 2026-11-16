@@ -68,35 +68,66 @@ Pagina: [docker volume prune](https://docs.docker.com/reference/cli/docker/volum
 
 ## Con parole mie
 
-1. Cosa vuol dire che una porta di un contenitore «non è pubblicata»? Chi può raggiungerla e chi no?
+### 1. Una porta non pubblicata
+ 
+> Cosa vuol dire che una porta di un contenitore «non è pubblicata»? Chi può raggiungerla e chi no?
+ 
+**Risposta:** una porta non pubblicata può essere raggiunta solo dal computer che ospita Docker e dagli altri contenitori collegati alla stessa rete di Docker, non dagli altri computer della rete di casa. Quindi dall'esterno non è raggiungibile.
+ 
+- **Dalla pagina:** per default il daemon Docker blocca l'accesso alle porte che non sono state pubblicate; le porte dei contenitori su reti bridge sono accessibili dall'host Docker e dagli altri contenitori collegati alla stessa rete, ma non da fuori dall'host (citazioni sopra).
 
-**Risposta:** Una porta non pubblicata può essere raggiunta solo dal computer che ospita Docker e dagli altri contenitori collegati alla stessa rete di Docker, non dagli altri computer della rete di casa. Quindi dall'esterno non è raggiungibile.
+### 2. `-p 8080:80` e `-p 127.0.0.1:8080:80`
+ 
+> Che differenza c'è tra `-p 8080:80` e `-p 127.0.0.1:8080:80`? Chi può collegarsi nei due casi?
+ 
+**Risposta:** nel primo caso chiunque sulla rete di casa o dell'ufficio può collegarsi alla porta `8080`, e la richiesta viene inoltrata alla porta `80` del container. Nel secondo caso solo il mio computer può collegarsi, usando l'indirizzo `127.0.0.1`.
+ 
+- **Dalla pagina:** `-p 8080:80` mappa la porta 8080 dell'host alla porta TCP 80 del contenitore. Pubblicare una porta è insicuro per default: la porta diventa disponibile non solo all'host, ma anche al mondo esterno. Con l'indirizzo `127.0.0.1` nel flag, solo l'host Docker può accedere alla porta pubblicata (citazioni sopra).
+- **Dedotto:** «rete di casa o dell'ufficio» è una mia lettura di «outside world».
 
-2. Che differenza c'è tra `-p 8080:80` e `-p 127.0.0.1:8080:80`? Chi può collegarsi nei due casi?
+### 3. Le parti di `127.0.0.1:3307->3306/tcp`
+ 
+> Nel `docker ps` di Orarium compare `127.0.0.1:3307->3306/tcp`. Cosa significano `3307`, `3306`, `->` e `/tcp`?
+ 
+**Risposta:** `127.0.0.1` dice che la porta è pubblicata solo sul mio computer. `3307` è la porta del mio computer, quella a cui mi collego io. `3306` è la porta del contenitore, dove ascolta il database. `/tcp` è il protocollo usato dalla porta.
+ 
+- **Visto:** nel `docker ps` di Orarium compare `127.0.0.1:3307->3306/tcp`.
+- **Dedotto:** credo che la freccia `->` indichi la direzione: quello che arriva alla 3307 del mio computer viene inoltrato alla 3306 del contenitore.
 
-**Risposta:** Nel primo caso stiamo dicendo che chiunque sulla rete di casa o dell'ufficio può collegarsi alla porta `8080`, e la richiesta viene inoltrata alla porta `80` del container. Nel secondo caso gli stiamo dicendo che solo il mio computer può collegarsi, usando l'indirizzo `127.0.0.1`.
+### 4. Dati in un contenitore e in un volume
+ 
+> Cosa succede ai dati scritti dentro un contenitore quando lo cancelli? E a quelli scritti in un volume?
+ 
+**Risposta:** quando cancello un contenitore, cancello anche i dati che ho scritto dentro di lui. Quelli scritti in un volume invece restano, perché il volume è separato dal contenitore e continua a esistere anche dopo la sua cancellazione.
+ 
+- **Dalla pagina:** il contenuto di un volume esiste fuori dal ciclo di vita di un contenitore; quando un contenitore viene distrutto, viene distrutto anche il suo strato scrivibile, mentre con un volume i dati restano anche se il contenitore viene rimosso (citazione sopra).
 
-3. Nel `docker ps` di Orarium compare `127.0.0.1:3307->3306/tcp`. Cosa significano `3307`, `3306`, `->` e `/tcp`?
+### 5. Volume con nome e volume anonimo, e `--rm`
+ 
+> Qual è la differenza tra un volume con nome e uno anonimo? Cosa cambia se avvii il contenitore con `--rm`?
+ 
+**Risposta:** il volume con nome lo scelgo io, per esempio `prova-volume`. Quello anonimo riceve un nome casuale da Docker. Con `--rm`, quando il contenitore viene cancellato alla fine, cancella anche i volumi anonimi, mentre quelli con nome restano.
+ 
+- **Dalla pagina:** i volumi anonimi, come quelli con nome, restano anche se rimuovo il contenitore che li usa, tranne se uso `--rm` alla creazione del contenitore: in quel caso il volume anonimo associato viene distrutto (citazione sopra).
 
-**Risposta:** `127.0.0.1` dice che la porta è pubblicata solo sul mio computer. `3307` è la porta del mio computer, quella a cui mi collego io. `3306` è la porta del contenitore, dove ascolta il database. Credo che la freccia `->` indichi la direzione: quello che arriva alla 3307 del mio computer viene inoltrato alla 3306 del contenitore. `/tcp` è il protocollo usato dalla porta.
+### 6. Un volume su una cartella piena
+ 
+> Cosa succede se monti un volume vuoto su una cartella piena del contenitore? E se il volume non è vuoto?
+ 
+**Risposta:** se il volume è vuoto, i file della cartella del contenitore vengono copiati dentro il volume. Se il volume non è vuoto, i file che c'erano nel contenitore vengono nascosti dal montaggio, ma non cancellati.
+ 
+- **Dalla pagina:** se monto un volume non vuoto in una cartella del contenitore dove esistono già file o cartelle, i file preesistenti vengono nascosti dal montaggio (citazione sopra).
+- **Non provato:** il caso del volume vuoto: le citazioni della pagina coprono solo il volume non vuoto.
 
-4. Cosa succede ai dati scritti dentro un contenitore quando lo cancelli? E a quelli scritti in un volume?
-
-**Risposta:** Quando cancello un contenitore, cancello anche i dati che ho scritto dentro di lui. Quelli scritti in un volume invece restano, perché il volume è separato dal contenitore e continua a esistere anche dopo la sua cancellazione.
-
-5. Qual è la differenza tra un volume con nome e uno anonimo? Cosa cambia se avvii il contenitore con `--rm`?
-
-**Risposta:** Il volume con nome lo scelgo io, per esempio `prova-volume`. Quello anonimo riceve un nome casuale da Docker. Con `--rm`, quando il contenitore viene cancellato alla fine, cancella anche i volumi anonimi, mentre quelli con nome restano.
-
-6. Cosa succede se monti un volume vuoto su una cartella piena del contenitore? E se il volume non è vuoto?
-
-**Risposta:** Se il volume è vuoto, i file della cartella del contenitore vengono copiati dentro il volume. Se il volume non è vuoto, i file che c'erano nel contenitore vengono nascosti dal montaggio, ma non cancellati.
-
-7. Perché in un progetto come Orarium non usiamo `docker volume prune`?
-
-**Cosa dice la pagina:** `docker volume prune` rimuove i volumi non referenziati da nessun contenitore. Di default cancella solo quelli anonimi; per cancellare anche quelli con nome serve `--all`.
-
-**Cosa deduco io:** un volume anonimo di un contenitore non più in uso verrebbe cancellato. Nel `compose.yaml` di Orarium il database usa `mysql_data:/var/lib/mysql`, un volume con nome, quindi `prune` semplice non lo tocca, ma `prune --all` sì, se nessun contenitore lo usa. Per questo non conviene usare `--all` a cuor leggero.
+### 7. Perché non usare `docker volume prune`
+ 
+> Perché in un progetto come Orarium non usiamo `docker volume prune`?
+ 
+**Risposta:** `prune` semplice non tocca `mysql_data`, che è un volume con nome, ma `prune --all` sì, se nessun contenitore lo usa: per questo non conviene usare `--all` a cuor leggero.
+ 
+- **Visto:** nel `compose.yaml` di Orarium il database usa `mysql_data:/var/lib/mysql`, un volume con nome.
+- **Dalla pagina:** `docker volume prune` rimuove i volumi non referenziati da nessun contenitore. Di default cancella solo quelli anonimi; per cancellare anche quelli con nome serve `--all`.
+- **Dedotto:** un volume anonimo di un contenitore non più in uso verrebbe cancellato.
 
 ## Esercizio: la traccia
 
