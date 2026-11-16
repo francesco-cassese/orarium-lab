@@ -50,23 +50,46 @@ in un archivio persistente. Come si fa lo vediamo più avanti.
 - Da [What is a container?](https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/): "A container is simply an isolated process with all of the files it needs to run."; "Since containers run in isolation, they have minimal influence on the host and other containers."; "Deleting one container won't affect any others."
 
 ## Con parole mie
-1. Cos'è un'immagine? 
-   Risposta: L’immagine è un pacchetto che contiene tutto ciò che serve al mio programma per partire: il programma, le librerie e la configurazione.
 
-2. Cos'è un contenitore? 
-   Risposta: Il contenitore è l’immagine in esecuzione: un processo isolato, con tutti i file che gli servono, dove il mio codice sta girando.
+### 1. Cos'è un'immagine
+ 
+> Cos'è un'immagine?
+ 
+**Risposta:** l'immagine è un pacchetto che contiene tutto ciò che serve al mio programma per partire: il programma, le librerie e la configurazione.
+ 
+### 2. Cos'è un contenitore
+ 
+> Cos'è un contenitore?
+ 
+**Risposta:** il contenitore è l'immagine in esecuzione: un processo isolato, con tutti i file che gli servono, dove il mio codice sta girando.
+ 
+- **Dalla pagina:** un contenitore è un'istanza eseguibile di un'immagine, ed è semplicemente un processo isolato con tutti i file di cui ha bisogno per girare (citazioni sopra).
 
-3. Perché si dice che un'immagine è "in sola lettura"? Cosa devo fare se voglio una
-   versione diversa?
-   Risposta: Si dice di sola lettura perchè non va mai cambiata, se ti serve aggiungere o modificare caratteristiche puoi farlo creandone un'altra e aggiungendo strati sopra a quella vecchia.
+### 3. Perché l'immagine è «in sola lettura»
+ 
+> Perché si dice che un'immagine è "in sola lettura"? Cosa devo fare se voglio una versione diversa?
+ 
+**Risposta:** si dice di sola lettura perché non va mai cambiata: se mi serve aggiungere o modificare caratteristiche, ne creo un'altra e aggiungo strati sopra a quella vecchia.
+ 
+- **Dalla pagina:** le immagini sono immutabili: una volta creata, un'immagine non si può modificare, e si può solo farne una nuova o aggiungere modifiche sopra; un'immagine è un modello in sola lettura con le istruzioni per creare un contenitore (citazioni sopra).
 
-4. Se elimino un contenitore, cosa succede all'immagine da cui è nato? E alle
-   modifiche che il contenitore aveva fatto?
-   Risposta: l'immagine rimane intatta, e le modifiche vanno via con il contenitore, è un ambiente isolato, quindi non intacca gli altri container
+### 4. Eliminare un contenitore
+ 
+> Se elimino un contenitore, cosa succede all'immagine da cui è nato? E alle modifiche che il contenitore aveva fatto?
+ 
+**Risposta:** l'immagine rimane intatta, e le modifiche vanno via con il contenitore; è un ambiente isolato, quindi non intacca gli altri contenitori.
+ 
+- **Dalla pagina:** quando un contenitore viene rimosso, i cambiamenti al suo stato che non sono in uno storage persistente spariscono; eliminare un contenitore non influisce sugli altri (citazioni sopra).
+- **Dedotto:** l'immagine resta intatta perché è immutabile: le citazioni sopra non lo dicono direttamente.
 
-5. Completa con parole tue: "L'immagine sta al contenitore come ___ sta a ___".
-   Poi spiega perché hai scelto proprio quel paragone.
-   Risposta: L'immagine sta al contenitore come la Classe sta all'Oggetto. L'immagine definisce la struttura di base ed è fissa (immutabile). Il container è l'istanza viva: ha un suo stato e sta lavorando. L'unica differenza è che due oggetti nel codice condividono la stessa memoria del programma, mentre i container sono scatole isolate il più possibile dal resto del computer.  
+### 5. Il paragone con classe e oggetto
+ 
+> Completa con parole tue: "L'immagine sta al contenitore come ___ sta a ___". Poi spiega perché hai scelto proprio quel paragone.
+ 
+**Risposta:** l'immagine sta al contenitore come la Classe sta all'Oggetto. L'immagine definisce la struttura di base ed è fissa (immutabile); il contenitore è l'istanza viva: ha un suo stato e sta lavorando.
+ 
+- **Dalla pagina:** le immagini sono immutabili, e un contenitore è un'istanza eseguibile di un'immagine (citazioni sopra).
+- **Dedotto:** l'unica differenza è che due oggetti nel codice condividono la stessa memoria del programma, mentre i contenitori sono scatole isolate il più possibile dal resto del computer.  
 
 ## Esercizio: la traccia
 
