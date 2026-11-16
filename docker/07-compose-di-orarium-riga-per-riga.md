@@ -104,10 +104,10 @@
 
 **Risposta:** è un bind mount: una cartella del mio pc collegata al contenitore. Non è un volume con nome, perché il percorso inizia con `./`. I tre pezzi sono `./docker/mysql/init` (la cartella sul mio pc), `/docker-entrypoint-initdb.d` (la cartella dentro il contenitore dove MySQL cerca gli script) e `ro` (sola lettura).
 
-- **Visto:** nella cartella c'è `01-test-database.sh`. Il nome compare nel commento di `.env.example` (riga 7). `orarium_test` è uguale a `DB_DATABASE` in `backend/phpunit.xml` (`Select-String`, riga 29).
+- **Visto:** nella cartella c'è `01-test-database.sh`. Il nome compare nel commento di `.env.example` (riga 7). `orarium_test` è uguale a `DB_DATABASE` in `backend/phpunit.xml` (`Select-String`, riga 29).  Il modo di `01-test-database.sh` in Git è `100644`, cioè senza bit di esecuzione (`git -C ..\orarium ls-files -s docker/mysql/init/01-test-database.sh`).
 - **Dalla pagina:** i percorsi relativi devono iniziare con `.` o `..`, per non confonderli con i volumi con nome; `:ro` vuol dire che il contenitore può leggere la cartella ma non scriverci (pagina dei servizi, citazioni sotto). Il commento dello script (righe 2–3) dice che crea il database di test `orarium_test` e dà i permessi all'utente dell'app. La pagina Docker Hub dice che gli script partono alla prima partenza del contenitore, in ordine alfabetico, e che i file `.sh` senza il bit di esecuzione vengono letti con `source` invece di essere eseguiti. Il commento dello script e `backend/README.md` (riga 32) dicono invece «quando il volume è nuovo».
-- **Dedotto:** il prefisso `01-` fa sì che lo script parta per primo: questa è la mia idea.
-- **Non provato:** un contenitore nuovo con un volume già pieno (la pagina non lo dice); se `01-test-database.sh` ha il bit di esecuzione.
+- **Dedotto:** il prefisso `01-` fa sì che lo script parta per primo: questa è la mia idea. Se nel contenitore lo script è senza bit di esecuzione, come in Git, la pagina dice che viene letto con `source` e non eseguito.
+- **Non provato:** i permessi di `01-test-database.sh` dentro il contenitore, che con il montaggio da Windows possono essere diversi da quelli di Git; un contenitore nuovo con un volume già pieno (la pagina non lo dice).
 
 ### 11. `CMD-SHELL` e il doppio dollaro
 
@@ -393,7 +393,7 @@ Prove di sola lettura sul progetto vero (Orarium), tranne il `docker compose up 
 
 ### Domande aperte
 
-- Non ho controllato il bit di esecuzione di `01-test-database.sh`. Non so cosa succede con un contenitore nuovo su un volume già pieno (domanda 10).
+- Non ho controllato i permessi di `01-test-database.sh` dentro il contenitore (in Git il modo è `100644`). Non so cosa succede con un contenitore nuovo su un volume già pieno (domanda 10).
 - `dump.rdb` è del 2 novembre: non so perché non sia più recente, non l'ho provato. Non so se da allora non ci sono state modifiche sufficienti per far scattare le regole di `save`, o se Redis salva solo in certi momenti.
 - Ipotesi, non provata: i contenitori sono fermi quando Docker Desktop si chiude o si riavvia. Può essere la causa dei vecchi `Exited (255)`.
 - `redis:8.2.6` è disponibile oggi; cosa cambia rispetto a 8.2.11 non lo so. Possibile aggiornamento a `8.2.11`: da valutare nella parte «Applicazione in Orarium», controllando anche `backend.yml`.
