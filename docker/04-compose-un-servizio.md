@@ -94,7 +94,7 @@ Traduzione: i servizi sono realizzati da un insieme di contenitori, che la piatt
  
 **Risposta:** con tre `docker run` separati devo ricordarmi ogni volta comandi lunghi, con porte, volumi e nomi, e rifarli uno per uno. Con un `compose.yaml` scrivo una volta sola cosa voglio far girare e con un solo comando, `docker compose up`, parte tutto.
  
-- **Dedotto:** il file si può rileggere, condividere e rifare identico da chiunque. Il limite è che il file descrive solo cosa far girare e con quali impostazioni, non l'ordine dei passaggi.
+- **Dedotto:** il file si può rileggere, condividere e rifare identico da chiunque. Il limite è che il file descrive cosa far girare e con quali impostazioni, ma l'ordine di avvio non lo decide da solo: serve `depends_on`, che ho provato nell'esercizio 06.
 
 ### 2. `docker compose up -d` due volte di fila
  
