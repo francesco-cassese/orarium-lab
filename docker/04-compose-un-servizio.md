@@ -88,35 +88,65 @@ Traduzione: i servizi sono realizzati da un insieme di contenitori, che la piatt
 
 ## Con parole mie
 
-1. Spiega a un collega che non conosce Docker perché gli conviene un compose.yaml invece di tre docker run separati.
+### 1. Compose invece di tre `docker run`
+ 
+> Spiega a un collega che non conosce Docker perché gli conviene un compose.yaml invece di tre docker run separati.
+ 
+**Risposta:** con tre `docker run` separati devo ricordarmi ogni volta comandi lunghi, con porte, volumi e nomi, e rifarli uno per uno. Con un `compose.yaml` scrivo una volta sola cosa voglio far girare e con un solo comando, `docker compose up`, parte tutto.
+ 
+- **Dedotto:** il file si può rileggere, condividere e rifare identico da chiunque. Il limite è che il file descrive solo cosa far girare e con quali impostazioni, non l'ordine dei passaggi.
 
-**Risposta:** Con tre `docker run` separati devo ricordarmi ogni volta comandi lunghi, con porte, volumi e nomi, e rifarli uno per uno. Con un `compose.yaml` scrivo una volta sola cosa voglio far girare, e con un solo comando, `docker compose up`, parte tutto. Il file si può rileggere, condividere e rifare identico da chiunque. Il limite è che il file descrive solo cosa far girare e con quali impostazioni, non l'ordine dei passaggi.
+### 2. `docker compose up -d` due volte di fila
+ 
+> Hai un compose.yaml e lanci `docker compose up -d` due volte di fila. Cosa ti aspetti alla seconda volta?
+ 
+**Risposta:** mi aspetto che non succeda niente di grave: Compose vede che i servizi sono già in esecuzione, quindi non crea contenitori nuovi e non me ne ritrovo due uguali.
+ 
+- **Dedotto:** se il file non è cambiato, mi aspetto che lo dica nell'output, per esempio con lo stato «Running» o «up-to-date». Se invece i contenitori erano fermi, li riavvia.
 
-2. Hai un compose.yaml e lanci `docker compose up -d` due volte di fila. Cosa ti aspetti alla seconda volta?
+### 3. `down` e `down -v`
+ 
+> Quando lanceresti `docker compose down` e quando `docker compose down -v`? Cosa rischi con la seconda?
+ 
+**Risposta:** lancerei `docker compose down` quando voglio fermare tutto a fine lavoro: i dati restano nei volumi, quindi la volta dopo basta un `docker compose up -d` e trovo il database com'era. Lancerei `docker compose down -v` solo se voglio ripartire da zero: il rischio è che cancella anche i dati del database di sviluppo, quindi perdo tutto e devo ricreare le tabelle con `php artisan migrate`.
+ 
+### 4. Tenere separati due ambienti
+ 
+> Metti lo stesso compose.yaml in due cartelle con nomi diversi e avvii entrambi. Cosa può andare storto se Compose non tenesse separati i due ambienti? Come fa a tenerli separati?
+ 
+**Risposta:** Compose li tiene separati con il nome del progetto: se non lo scelgo io, è il nome della cartella, e Compose lo mette davanti ai nomi di contenitori e volumi.
+ 
+- **Visto:** anche per le reti il nome del progetto va davanti: l'ho visto nell'esercizio con `prova-compose_default` e `orarium_default`.
+- **Dalla pagina:** per default Compose assegna il nome del progetto in base alla cartella che contiene il file, e lo usa per isolare gli ambienti. Si può cambiare con `-p`, con la variabile `COMPOSE_PROJECT_NAME` o con `name:` nel file, e questi tre hanno la precedenza sul nome della cartella (citazioni sopra).
+- **Dedotto:** se Compose non separasse i due ambienti, ci sarebbero problemi: i due file creano le stesse cose, quindi i nomi dei contenitori si scontrerebbero; i dati di un ambiente finirebbero nei volumi dell'altro; un `down` in una cartella fermerebbe anche i contenitori dell'altra.
 
-**Risposta:** Mi aspetto che non succeda niente di grave. Compose vede che i servizi sono già in esecuzione, quindi non crea contenitori nuovi e non me ne ritrovo due uguali. Se il file non è cambiato, mi aspetto che lo dica nell'output, per esempio con lo stato «Running» o «up-to-date». Se invece i contenitori erano fermi, li riavvia.
+### 5. Il nome del progetto di Orarium
+ 
+> Apri il compose.yaml di Orarium: c'è un `name:` in cima? Se no, quale voce dell'elenco di precedenza si applica e che nome di progetto ne esce?
+ 
+**Risposta:** no, in cima al file non c'è nessun `name:`: il file inizia direttamente con `services:`. Non uso il flag `-p` e nel `.env` di Orarium non c'è `COMPOSE_PROJECT_NAME`, quindi si applica la voce 4 dell'elenco, il nome della cartella: la cartella si chiama `orarium`, quindi il progetto è `orarium`.
+ 
+- **Visto:** l'ho verificato con `docker compose ls`: il progetto si chiama `orarium` e ha 2 servizi in esecuzione (`running(2)`). Nessun altro nome lo ha cambiato.
+- **Dalla pagina:** la precedenza è, dalla più alta alla più bassa: `-p`, `COMPOSE_PROJECT_NAME`, `name:` nel file, nome della cartella (citazione sopra).
 
-3. Quando lanceresti `docker compose down` e quando `docker compose down -v`? Cosa rischi con la seconda?
+### 6. Lo schema dei nomi
+ 
+> Confronta i nomi che hai visto in Orarium (`orarium-db-1`, `orarium-redis-1`, `orarium_mysql_data`) con `example-frontend-1` dell'esempio della pagina. Che schema vedi? Scrivi cosa è certo e cosa è una tua ipotesi.
+ 
+**Risposta:** lo schema è: contenitori come `<progetto>-<servizio>-<numero>`, volumi come `<progetto>_<nome del volume>`. Il progetto è `orarium`, il servizio è `db` o `redis`, e il numero è `1`.
+ 
+- **Visto:** sul mio computer ci sono i contenitori `orarium-db-1` e `orarium-redis-1`, e i volumi `orarium_mysql_data` e `orarium_redis_data`; li ho controllati con `docker ps -a` e `docker volume ls`.
+- **Dedotto:** `example-frontend-1` segue lo stesso schema, con progetto `example` e servizio `frontend`.
+- **Non provato:** `example-frontend-1`: l'esempio è solo scritto nella pagina e non l'ho lanciato.
 
-**Risposta:** Lancerei `docker compose down` quando voglio fermare tutto a fine lavoro. I dati restano nei volumi, quindi la volta dopo basta un `docker compose up -d` e trovo il database com'era. Lancerei `docker compose down -v` solo se voglio ripartire da zero. Il rischio con `-v` è che cancella anche i dati del database di sviluppo, quindi perdo tutto e devo ricreare le tabelle con `php artisan migrate`.
-
-4. Metti lo stesso compose.yaml in due cartelle con nomi diversi e avvii entrambi. Cosa può andare storto se Compose non tenesse separati i due ambienti? Come fa a tenerli separati?
-
-**Risposta:** Se Compose non separasse i due ambienti, ci sarebbero problemi. I due file creano le stesse cose, quindi i nomi dei contenitori si scontrerebbero. I dati di un ambiente finirebbero nei volumi dell'altro. Un `down` in una cartella fermerebbe anche i contenitori dell'altra. Compose evita tutto questo con il nome del progetto. Se non lo scelgo io, è il nome della cartella, e lo mette davanti ai nomi di contenitori e volumi. Anche per le reti il nome del progetto va davanti: l'ho visto nell'esercizio con `prova-compose_default` e `orarium_default`. Posso cambiarlo con `-p`, con la variabile `COMPOSE_PROJECT_NAME` o con `name:` nel file. Questi tre hanno la precedenza sul nome della cartella.
-
-5. Apri il compose.yaml di Orarium: c'è un `name:` in cima? Se no, quale voce dell'elenco di precedenza si applica e che nome di progetto ne esce?
-
-**Risposta:** No, in cima al file non c'è nessun `name:`. Il file inizia direttamente con `services:`. Non uso il flag `-p`, e nel file `.env` di Orarium non c'è `COMPOSE_PROJECT_NAME`. Quindi si applica la voce 4 dell'elenco: il nome della cartella che contiene il file. La cartella si chiama `orarium`, quindi il nome del progetto è `orarium`. L'ho verificato con `docker compose ls`: il progetto si chiama `orarium` e ha 2 servizi in esecuzione (`running(2)`). Nessun altro nome lo ha cambiato.
-
-6. Confronta i nomi che hai visto in Orarium (`orarium-db-1`, `orarium-redis-1`, `orarium_mysql_data`) con `example-frontend-1` dell'esempio della pagina. Che schema vedi? Scrivi cosa è certo e cosa è una tua ipotesi.
-
-**Risposta:** Sul mio computer ci sono i contenitori `orarium-db-1` e `orarium-redis-1`, e i volumi `orarium_mysql_data` e `orarium_redis_data`. Li ho controllati con `docker ps -a` e `docker volume ls`. Lo schema che vedo è: contenitori come `<progetto>-<servizio>-<numero>`, volumi come `<progetto>_<nome del volume>`. Il progetto è `orarium`, il servizio è `db` o `redis`, e il numero è `1`.
-
-Ipotesi: `example-frontend-1` segue lo stesso schema, con progetto `example` e servizio `frontend`. Non l'ho verificato, perché l'esempio è solo scritto nella pagina e non l'ho lanciato.
-
-7. Nel compose.yaml di Orarium indica un servizio e un volume con nome. A quale comando a mano dell'esercizio 03 corrisponde ciascuno?
-
-**Risposta:** Il servizio è `db`. Corrisponde a un intero `docker run -d --name ... -p ... -v ... immagine`: l'immagine `mysql:8.4.13` è scritta in `image:`, la porta in `ports:` e il volume in `volumes:`. Il volume con nome è `mysql_data`. Nel servizio compare come `mysql_data:/var/lib/mysql`, quindi corrisponde a `-v nome:/percorso`. La sua dichiarazione in fondo al file, nel blocco `volumes:`, corrisponde a `docker volume create nome`.
+### 7. Servizio e volume a confronto con l'esercizio 03
+ 
+> Nel compose.yaml di Orarium indica un servizio e un volume con nome. A quale comando a mano dell'esercizio 03 corrisponde ciascuno?
+ 
+**Risposta:** il servizio è `db` e corrisponde a un intero `docker run -d --name ... -p ... -v ... immagine`. Il volume con nome è `mysql_data` e corrisponde a `-v nome:/percorso`, mentre la sua dichiarazione in fondo al file, nel blocco `volumes:`, corrisponde a `docker volume create nome`.
+ 
+- **Visto:** nel `compose.yaml`, `db` ha l'immagine `mysql:8.4.13` in `image:`, la porta in `ports:` e il volume in `volumes:`; nel servizio il volume compare come `mysql_data:/var/lib/mysql`.
+- **Dedotto:** le corrispondenze con i comandi dell'esercizio 03 (`docker run`, `-v`, `docker volume create`) sono letture mie.
 
 ## Esercizio: la traccia
 
