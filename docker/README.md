@@ -10,4 +10,4 @@ Comandi usati finora: [diario dei comandi](comandi.md).
 - [x] [04 - Compose: un servizio](04-compose-un-servizio.md)
 - [x] [05 - Variabili d'ambiente e healthcheck](05-variabili-e-healthcheck.md)
 - [x] [06 - Due servizi con `depends_on`](06-due-servizi-con-depends-on.md)
-- [ ] 07 - Il `compose.yaml` di Orarium spiegato riga per riga
+- [x] [07 - Il `compose.yaml` di Orarium spiegato riga per riga](07-compose-di-orarium-riga-per-riga.md)
