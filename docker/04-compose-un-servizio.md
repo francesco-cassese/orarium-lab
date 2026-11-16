@@ -106,10 +106,12 @@ Traduzione: i servizi sono realizzati da un insieme di contenitori, che la piatt
 - **Dedotto:** se il file non è cambiato, mi aspetto che lo dica nell'output, per esempio con lo stato «Running» o «up-to-date». Se invece i contenitori erano fermi, li riavvia.
 
 ### 3. `down` e `down -v`
- 
+
 > Quando lanceresti `docker compose down` e quando `docker compose down -v`? Cosa rischi con la seconda?
- 
+
 **Risposta:** lancerei `docker compose down` quando voglio fermare tutto a fine lavoro: i dati restano nei volumi, quindi la volta dopo basta un `docker compose up -d` e trovo il database com'era. Lancerei `docker compose down -v` solo se voglio ripartire da zero: il rischio è che cancella anche i dati del database di sviluppo, quindi perdo tutto e devo ricreare le tabelle con `php artisan migrate`.
+
+- **Visto:** con `docker compose down` il contenitore e la rete sono stati rimossi, mentre il volume `prova-compose_dati` c'era ancora in `docker volume ls` (passo 11). Con `docker compose -p altro down -v` è sparito `altro_dati`, e `prova-compose_dati` è rimasto (passo 13).
  
 ### 4. Tenere separati due ambienti
  
