@@ -6,6 +6,7 @@ Orarium è il progetto a cui mi serve tutto questo: un'app per pianificare produ
 ## Come è organizzata
 
 - [docker/](docker/): esercizi su Docker (immagine e contenitore, avviare, vedere e fermare un contenitore, porte e volumi, Compose con un servizio, variabili d'ambiente e healthcheck, `depends_on`, il `compose.yaml` di Orarium).
+- [vitest/](vitest/): esercizi su Vitest (per ora solo l'esercizio 01: il primo test, `test` ed `expect`, `vitest run` e il watch).
 
 ## Come lavoro
 
@@ -18,4 +19,4 @@ Orarium è il progetto a cui mi serve tutto questo: un'app per pianificare produ
 
 ## Stato
 
-Ho fatto gli esercizi da 01 a 07 di Docker: immagine e contenitore, come avviarli, vederli e fermarli, porte e volumi, Compose con un servizio, variabili d'ambiente e healthcheck, due servizi con `depends_on`, il `compose.yaml` di Orarium riga per riga, con il diario dei comandi. Il blocco su Docker è finito ([vedi l'indice](docker/README.md)). Il prossimo argomento lo scelgo a parte.
+Ho fatto gli esercizi da 01 a 07 di Docker: immagine e contenitore, come avviarli, vederli e fermarli, porte e volumi, Compose con un servizio, variabili d'ambiente e healthcheck, due servizi con `depends_on`, il `compose.yaml` di Orarium riga per riga, con il diario dei comandi. Il blocco su Docker è finito ([vedi l'indice](docker/README.md)). Ho cominciato Vitest e ho fatto l'esercizio 01 ([vedi l'indice](vitest/README.md)).
