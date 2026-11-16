@@ -2,189 +2,188 @@
 
 ## Con parole mie
 
-1. Cosa vuol dire `services:` e cosa rappresenta `db`?
+### 1. Cosa sono `services` e `db`
 
-**Risposta:**
+> Cosa vuol dire `services:` e cosa rappresenta `db`?
 
-- `services:` è la lista dei servizi del progetto. Ogni servizio è un pezzo dell'app che Compose fa partire nel suo contenitore.
-- In Orarium i servizi sono due: `db` e `redis`.
-- `db` è il nome che uso per il database MySQL. Il comando `docker compose exec db mysql` del README del backend lo usa, quindi il nome conta per i comandi. Non è il nome del contenitore.
-- `db` c'è già nel primo commit del file (`c62d9d0`, PR #14), con `image: mysql:8.4.13`. Quindi il nome non è stato cambiato dopo. Chi l'ha scelto non si capisce dal commit: non lo so.
-- La pagina dice che `services` è una mappa: le chiavi sono i nomi dei servizi, e i valori sono le loro impostazioni. `db` è una di queste chiavi.
+**Risposta:** `services:` è la lista dei servizi del progetto: ogni servizio è un pezzo dell'app che Compose fa partire nel suo contenitore. In Orarium i servizi sono due, `db` e `redis`, e `db` è il nome che uso per il database MySQL.
 
-2. Perché il tag è `mysql:8.4.13` e non `mysql:latest` o `mysql:8.4`?
+- **Visto:** `db` c'è già nel primo commit del file (`c62d9d0`, PR #14), con `image: mysql:8.4.13`.
+- **Dalla pagina:** la pagina dice che `services` è una mappa: le chiavi sono i nomi dei servizi, e i valori sono le loro impostazioni; `db` è una di queste chiavi. Il comando `docker compose exec db mysql` del README del backend usa `db`, quindi il nome conta per i comandi; non è il nome del contenitore.
+- **Dedotto:** il nome `db` non è stato cambiato dopo il primo commit, perché c'è già lì.
+- **Non provato:** chi ha scelto il nome non si capisce dal commit: non lo so.
 
-**Risposta:**
+### 2. Perché il tag fisso
 
-- `latest` cambia quando esce una versione nuova, e non mi avvisa.
-- `8.4.13` è sempre la stessa versione.
-- D-004 (in `docs/DECISIONS.md`) vuole un ambiente uguale sul mio pc e in CI. Per questo scarta i tag generici come `redis:8` e `redis:latest`, perché la versione cambia nel tempo (riga 76).
-- Per `mysql:8.4` la pagina Docker Hub di MySQL, copiata il 16 novembre 2026, mette `8.4.13` e `8.4` nello stesso gruppo. Cosa succede quando esce la 8.4.14 non lo dice la pagina, e non l'ho provato.
-- Nella stessa pagina il primo gruppo di tag inizia con `26.10.0`, `26.10`, `26`, `innovation`, `latest`. Quindi al momento della copia `latest` era una versione 26, non la serie 8.4. Non ho fatto nessun pull.
-- Con `latest` la pagina dice che il tag viene sempre riscaricato (voce `pull_policy`). Quindi, se esce una versione nuova, la ritrovo senza cambiare il file. Non l'ho provato.
-- La pagina da sola non spiega perché usare un tag fisso. Il motivo lo prendo da D-004.
+> Perché il tag è `mysql:8.4.13` e non `mysql:latest` o `mysql:8.4`?
 
-3. Cosa dice il commento della riga 3, e perché i due tag vanno aggiornati insieme?
+**Risposta:** `latest` cambia quando esce una versione nuova, e non mi avvisa. `8.4.13` è sempre la stessa versione.
 
-**Risposta:**
+- **Dalla pagina:** D-004 (in `docs/DECISIONS.md`) vuole un ambiente uguale sul mio pc e in CI. Per questo scarta i tag generici come `redis:8` e `redis:latest`, perché la versione cambia nel tempo (riga 76). La pagina Docker Hub di MySQL, copiata il 16 novembre 2026, mette `8.4.13` e `8.4` nello stesso gruppo; nella stessa pagina il primo gruppo di tag inizia con `26.10.0`, `26.10`, `26`, `innovation`, `latest`. Con `latest` la pagina dei servizi dice che il tag viene sempre riscaricato (voce `pull_policy`). La pagina da sola non spiega perché usare un tag fisso: il motivo lo prendo da D-004.
+- **Dedotto:** al momento della copia `latest` era una versione 26, non la serie 8.4. Con `latest`, se esce una versione nuova, la ritrovo senza cambiare il file.
+- **Non provato:** cosa succede quando esce la 8.4.14 (la pagina non lo dice); il riscarico di `latest`; non ho fatto nessun pull.
 
-- Il commento dice: «Stesso tag di `.github/workflows/backend.yml`: aggiornali insieme (D-004, D-010)».
-- Ho aperto `backend.yml` alla riga 26: c'è `image: mysql:8.4.13`, come nel mio `compose.yaml`.
-- D-010 dice che i test girano su MySQL perché deve essere lo stesso motore di sviluppo e produzione. Un test verde sul mio pc può diventare rosso in CI. D-010 però non dice di tenere uguali i due tag: quel legame lo leggo nel commento.
-- Se cambio il tag in un file solo, il database del mio pc e quello della CI non sono più uguali. Un test può passare in uno e fallire nell'altro.
-- Questa è una mia deduzione dal commento e dalle decisioni. Non ho provato un caso reale.
+### 3. Il commento alla riga 3
 
-4. Cosa succede la prima volta che avvio Orarium e `mysql:8.4.13` non è ancora sul mio computer?
+> Cosa dice il commento della riga 3, e perché i due tag vanno aggiornati insieme?
 
-**Risposta:**
+**Risposta:** il commento dice: «Stesso tag di `.github/workflows/backend.yml`: aggiornali insieme (D-004, D-010)». Se cambio il tag in un file solo, il database del mio pc e quello della CI non sono più uguali.
 
-- La pagina dice che, se l'immagine non c'è, Compose prova a scaricarla secondo il `pull_policy`.
-- Con la policy `missing` scarica solo se l'immagine non è già sul computer.
-- Il valore predefinito è `missing` se non uso `build`. Orarium non usa `build`, quindi per `mysql:8.4.13` vale `missing`.
-- Un caso simile c'è nell'esercizio 03, passo 5: `docker run ... alpine` ha scaricato `alpine:latest`. Ma era `docker run`, non Compose: è solo un'analogia.
-- Per `mysql:8.4.13` non ho provato il pull. Con `docker image ls mysql` vedo che l'immagine è già sul mio pc (creata 2 settimane fa, 1.12GB). Non serve scaricarla.
+- **Visto:** ho aperto `backend.yml` alla riga 26: c'è `image: mysql:8.4.13`, come nel mio `compose.yaml`.
+- **Dalla pagina:** D-010 dice che i test girano su MySQL perché deve essere lo stesso motore di sviluppo e produzione. D-010 però non dice di tenere uguali i due tag: quel legame lo leggo nel commento.
+- **Dedotto:** un test verde sul mio pc può diventare rosso in CI; se cambio il tag in un file solo, un test può passare in uno e fallire nell'altro. È una mia deduzione dal commento e dalle decisioni.
+- **Non provato:** non ho provato un caso reale.
 
-5. Nella riga `"127.0.0.1:3307:3306"`, quale pezzo è l'IP dell'host, quale la porta dell'host e quale la porta del contenitore? Cosa cambierebbe senza `127.0.0.1`?
+### 4. Primo avvio senza l'immagine
 
-**Risposta:**
+> Cosa succede la prima volta che avvio Orarium e `mysql:8.4.13` non è ancora sul mio computer?
 
-- **`127.0.0.1`** è l'IP. Dice che la porta è aperta solo sul mio pc. Si può anche non scrivere.
-- **`3307`** è la porta del mio pc: è quella a cui mi collego io.
-- **`3306`** è la porta del contenitore, dove ascolta MySQL.
-- **Senza `127.0.0.1`** (cioè `"3307:3306"`), la porta non resta solo sul mio pc. La pagina dice che Docker la apre su tutte le interfacce (`0.0.0.0`). Quindi altri dispositivi della rete, o internet se il pc ha un IP pubblico, potrebbero arrivarci.
-- Non l'ho provato: so solo quello che dice la pagina. Nel mio `docker ps` vedo solo `127.0.0.1:3307->3306/tcp` (esercizio 02, passo 2, ed esercizio 03).
+**Risposta:** con la policy `missing` Compose scarica l'immagine solo se non è già sul computer. Il valore predefinito è `missing` se non uso `build`.
 
-6. Perché la riga è tra virgolette?
+- **Visto:** Orarium non usa `build`. Con `docker image ls mysql` vedo che `mysql:8.4.13` è già sul mio pc (creata 2 settimane fa, 1.12GB), quindi non serve scaricarla. Un caso simile c'è nell'esercizio 03, passo 5: `docker run ... alpine` ha scaricato `alpine:latest`.
+- **Dalla pagina:** se l'immagine non c'è, Compose prova a scaricarla secondo il `pull_policy`.
+- **Dedotto:** poiché Orarium non usa `build`, per `mysql:8.4.13` vale `missing`. Il caso di `alpine` era `docker run`, non Compose: è solo un'analogia.
+- **Non provato:** il pull di `mysql:8.4.13`.
 
-**Risposta:**
+### 5. IP e porte della riga `127.0.0.1:3307:3306`
 
-- La pagina dice che `HOST:CONTAINER` va sempre scritto tra virgolette, per evitare conflitti con i numeri in base 60 di YAML.
-- Non spiega il caso. Per `3307:3306` non so se succederebbe, e non l'ho provato.
+> Nella riga `"127.0.0.1:3307:3306"`, quale pezzo è l'IP dell'host, quale la porta dell'host e quale la porta del contenitore? Cosa cambierebbe senza `127.0.0.1`?
 
-7. Perché fuori è `3307` e dentro `3306`?
+**Risposta:** `127.0.0.1` è l'IP, `3307` è la porta del mio pc e `3306` è la porta del contenitore, dove ascolta MySQL. Senza `127.0.0.1` la porta si aprirebbe su tutte le interfacce.
 
-**Risposta:**
+- **Visto:** nel mio `docker ps` compare solo `127.0.0.1:3307->3306/tcp` (esercizio 02, passo 2, ed esercizio 03); la prova 1 della traccia lo conferma.
+- **Dalla pagina:** la riga ha la forma IP, porta dell'host, porta del contenitore, e l'IP si può omettere. Senza IP, Docker apre la porta su tutte le interfacce (`0.0.0.0`) e può esporla a internet se il pc ha un IP pubblico (citazione `ports`).
+- **Dedotto:** senza `127.0.0.1`, altri dispositivi della rete potrebbero raggiungere la porta.
+- **Non provato:** la riga `"3307:3306"` senza `127.0.0.1`.
 
-- **`3306`** dentro è la porta standard di MySQL. Il contenitore la usa così, e non la cambio. Nel 05, con `docker image inspect`, ho visto che l'immagine dichiara `3306/tcp`.
-- **`3307`** fuori la scelgo io. D-004 la sceglie per evitare conflitti con un MySQL già installato sul pc, che userebbe la `3306`.
-- **`127.0.0.1`**: D-004 dice che la porta è legata a `127.0.0.1`, quindi non si raggiunge dalla rete di casa.
-- Il conflitto con un MySQL installato non l'ho provato: lo so da D-004. Il `backend/README.md` (riga 122) usa `3307` per il client, quindi è lo stesso valore.
+### 6. Perché la riga è tra virgolette
 
-8. Le quattro variabili `MYSQL_*`: da dove prende i valori Compose, e cosa succede se mancano?
+> Perché la riga è tra virgolette?
 
-**Risposta:**
+**Risposta:** la pagina dice che `HOST:CONTAINER` va sempre scritto tra virgolette, per evitare conflitti con i numeri in base 60 di YAML.
 
-- Le variabili sono `MYSQL_ROOT_PASSWORD`, `MYSQL_DATABASE`, `MYSQL_USER` e `MYSQL_PASSWORD`. Nel `compose.yaml` si scrivono come `${NOME}`.
-- Compose prende i valori dal file `.env`, nella cartella del progetto. Il `.env` non va su Git: lo dice D-004, e lo conferma il `.gitignore` (verificato con `Select-String`, righe 8 e 9).
-- Il `.env.example` ha vuote `MYSQL_ROOT_PASSWORD` e `MYSQL_PASSWORD`. `MYSQL_DATABASE` e `MYSQL_USER` hanno `orarium` (verificato con `Select-String`).
-- Se una variabile manca, nell'esercizio 05 (passo 5) Compose ha stampato un avviso e ha usato una stringa vuota. Quindi per `db` il valore arriverebbe vuoto.
-- La pagina Docker Hub di MySQL dice che `MYSQL_ROOT_PASSWORD` è obbligatoria (citazione sotto), ma non dice cosa succede con un valore vuoto. Non l'ho provato.
-- La stessa pagina dice che, se la cartella dati ha già un database, le `MYSQL_*` non hanno effetto. Quindi con il volume `mysql_data` già pieno, cambiare il `.env` non cambia il database. Non l'ho provato.
-- Nell'esercizio 05 (passo 6) una variabile della shell ha vinto sul `.env`. Qui non è successo, ma è da ricordare.
+- **Dalla pagina:** la pagina non spiega il caso concreto (citazione `ports`).
+- **Non provato:** per `3307:3306` non so se il conflitto succederebbe.
 
-9. Nella riga `mysql_data:/var/lib/mysql`: cosa è `mysql_data`, cosa è `/var/lib/mysql`, e dove è dichiarato `mysql_data` nel file? Cosa succede ai dati con `docker compose down`? (Esercizio 03 e PR #87.)
+### 7. Perché 3307 fuori e 3306 dentro
 
-**Risposta:**
+> Perché fuori è `3307` e dentro `3306`?
 
-- `mysql_data` è il nome del volume: lo spazio, gestito da Docker, dove stanno i dati del database. La pagina dei servizi lo chiama «VOLUME» (citazione sotto).
-- `/var/lib/mysql` è la cartella dentro il contenitore dove MySQL salva i suoi file. La pagina la chiama «CONTAINER_PATH» (citazione sotto). Il volume viene collegato lì: quello che MySQL scrive finisce nel volume.
-- Il volume è dichiarato in fondo al file, nel blocco `volumes:` (righe 33–35).
-- Con `docker compose down` i dati restano. Nel 04, passo 11, il volume è rimasto. Nel 03 (parte sulla PR #87) c'è la nota su dove stanno i dati, e dopo `up -d` le migrazioni erano ancora `Ran`. Il `backend/README.md` (riga 102) dice che `down` lascia i dati.
-- Provato: `down` senza `-v` su un progetto di prova (04, passo 11). Non provato: `down` sul progetto Orarium.
-- Con `down -v` il volume viene cancellato, e con lui i dati. Il `backend/README.md` (riga 103) lo dice. L'ho provato solo su un progetto di prova, `altro` (04, passo 13).
-- Non ho lanciato nessun `down -v` su Orarium, e non lo farò.
-- Collegamento con la domanda 8: con il volume già pieno, cambiare `MYSQL_*` non cambia il database. Non l'ho provato.
+**Risposta:** `3306` dentro è la porta standard di MySQL. `3307` fuori la scelgo io.
 
-10. Nella riga `./docker/mysql/init:/docker-entrypoint-initdb.d:ro`: quali sono i tre pezzi, che tipo di montaggio è, e cosa fa `:ro`? Cosa c'è nella cartella `docker/mysql/init`?
+- **Visto:** nel 05, con `docker image inspect`, ho visto che l'immagine dichiara `3306/tcp`.
+- **Dalla pagina:** D-004 sceglie `3307` per evitare conflitti con un MySQL già installato sul pc, che userebbe la `3306`. D-004 dice anche che la porta è legata a `127.0.0.1`, quindi non si raggiunge dalla rete di casa. Il `backend/README.md` (riga 122) usa `3307` per il client, quindi è lo stesso valore.
+- **Dedotto:** il contenitore usa `3306` così com'è, e non la cambio.
+- **Non provato:** il conflitto con un MySQL installato: lo so da D-004.
 
-**Risposta:**
+### 8. Variabili `MYSQL_*` e file `.env`
 
-- I tre pezzi sono: `./docker/mysql/init` (la cartella sul mio pc), `/docker-entrypoint-initdb.d` (la cartella dentro il contenitore dove MySQL cerca gli script), `ro` (sola lettura).
-- È un bind mount: una cartella del mio pc collegata al contenitore. Non è un volume con nome, perché il percorso inizia con `./`. La pagina dice che i percorsi relativi devono iniziare con `.` o `..`, per non confonderli con i volumi con nome (citazione sotto).
-- `:ro` vuol dire che il contenitore può leggere la cartella ma non scriverci. Lo dice la pagina dei servizi (citazione sotto).
-- Nella cartella c'è `01-test-database.sh`. Il nome compare nel commento di `.env.example` (riga 7). Il commento dello script (righe 2–3) dice che crea il database di test `orarium_test` e dà i permessi all'utente dell'app. `orarium_test` deve essere uguale a `DB_DATABASE` in `backend/phpunit.xml` (verificato con `Select-String`, riga 29).
-- Lo script parte alla prima partenza del contenitore, in ordine alfabetico (pagina Docker Hub). Il prefisso `01-` fa sì che parta per primo: questa è la mia idea. Il commento dello script e `backend/README.md` (riga 32) dicono invece «quando il volume è nuovo». Un contenitore nuovo con un volume già pieno: la pagina non lo dice, e non l'ho provato. È una domanda aperta.
-- La pagina dice che i file `.sh` senza il bit di esecuzione vengono letti con `source` invece di essere eseguiti. Non so se `01-test-database.sh` ha quel bit: non l'ho controllato.
+> Le quattro variabili `MYSQL_*`: da dove prende i valori Compose, e cosa succede se mancano?
 
-11. Cosa fa `CMD-SHELL` rispetto a `CMD`, e perché qui serve? Cosa fa `$$` davanti a `MYSQL_ROOT_PASSWORD`?
+**Risposta:** Compose prende i valori dal file `.env`, nella cartella del progetto. Se una variabile manca, nell'esercizio 05 (passo 5) Compose ha stampato un avviso e ha usato una stringa vuota.
 
-**Risposta:**
+- **Visto:** le variabili sono `MYSQL_ROOT_PASSWORD`, `MYSQL_DATABASE`, `MYSQL_USER` e `MYSQL_PASSWORD`; nel `compose.yaml` si scrivono come `${NOME}`. Il `.gitignore` esclude il `.env` (`Select-String`, righe 8 e 9). Il `.env.example` ha vuote `MYSQL_ROOT_PASSWORD` e `MYSQL_PASSWORD`, mentre `MYSQL_DATABASE` e `MYSQL_USER` hanno `orarium` (`Select-String`). Nell'esercizio 05 (passo 6) una variabile della shell ha vinto sul `.env`: qui non è successo, ma è da ricordare.
+- **Dalla pagina:** D-004 dice che il `.env` non va su Git. La pagina Docker Hub di MySQL dice che `MYSQL_ROOT_PASSWORD` è obbligatoria (citazione sotto), ma non dice cosa succede con un valore vuoto; dice anche che, se la cartella dati ha già un database, le `MYSQL_*` non hanno effetto.
+- **Dedotto:** per `db`, una variabile mancante arriverebbe vuota. Con il volume `mysql_data` già pieno, cambiare il `.env` non cambia il database.
+- **Non provato:** cosa succede con `MYSQL_ROOT_PASSWORD` vuota; cambiare il `.env` con il volume già pieno.
 
-- `CMD-SHELL` è il primo elemento della lista `test`, come dice la pagina. Il comando parte dalla shell del contenitore (`/bin/sh` su Linux).
-- Con `CMD` il programma parte direttamente, senza shell. Questa è una mia deduzione: la pagina dei servizi non lo dice.
-- Il mio comando legge una variabile (`$MYSQL_ROOT_PASSWORD`). Per leggerla serve una shell, quindi uso `CMD-SHELL`. È una mia lettura, non una prova.
-- **`$$`**: la pagina Interpolation dice che `$$` serve per avere un dollaro letterale, e che Compose non sostituisce il valore (citazione sotto).
-- Nel `docker inspect` del `db` il test contiene `-p$MYSQL_ROOT_PASSWORD`, con un dollaro solo. Quindi Compose ha tolto un `$` prima di passare il comando al contenitore. È coerente con la pagina Interpolation (esercizio 05).
-- Il valore della password non si vede: resta il nome della variabile. Lo sostituisce la shell del contenitore. In questo output non lo vedo: è una deduzione, non una prova.
+### 9. Il volume `mysql_data` e `docker compose down`
 
-12. Pezzo per pezzo, cosa fa `mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent`?
+> Nella riga `mysql_data:/var/lib/mysql`: cosa è `mysql_data`, cosa è `/var/lib/mysql`, e dove è dichiarato `mysql_data` nel file? Cosa succede ai dati con `docker compose down`? (Esercizio 03 e PR #87.)
 
-**Risposta:**
+**Risposta:** `mysql_data` è il nome del volume: lo spazio, gestito da Docker, dove stanno i dati del database. `/var/lib/mysql` è la cartella dentro il contenitore dove MySQL salva i suoi file. Con `docker compose down` i dati restano.
 
-- `mysqladmin` è lo strumento con cui MySQL si amministra. `ping` controlla se il server è acceso (citazioni sotto).
-- `-h 127.0.0.1` dice a quale indirizzo collegarsi.
-- Domanda aperta: perché `127.0.0.1` e non `localhost`? Non lo so. La pagina dice che il valore predefinito di `--host` è `localhost`, e che `--socket` serve per le connessioni a localhost. Quindi con `localhost` il client userebbe il file socket, con `127.0.0.1` una connessione TCP. Non è detto che sia il motivo di Orarium.
-- `-uroot` è l'utente con cui mi collego.
-- `-p$MYSQL_ROOT_PASSWORD` è la password. Come nella domanda 11, il valore lo mette la shell del contenitore: non lo vedo.
-- `--silent` esce senza messaggi solo se la connessione non riesce (citazione sotto). Se la connessione riesce, `mysqld is alive` compare lo stesso: è quello che ho visto nel log del 05. È una mia deduzione dalla frase.
-- `-p` e la password devono stare attaccati, senza spazio: lo dice la pagina. L'avviso «insecure» del log del 05 è quello che la pagina scrive sulla password nella riga di comando.
-- Il controllo passa se il comando esce con codice 0 (citazione Dockerfile reference sotto).
-- `ping` risponde a «il server è acceso?», non a «la password è giusta?». La pagina dice che con una password sbagliata il comando esce comunque con 0. Quindi che Docker segni `healthy` in quel caso è una mia deduzione: non l'ho provato.
+- **Visto:** il volume è dichiarato in fondo al file, nel blocco `volumes:` (righe 33–35). Nel 04, passo 11, `down` senza `-v` su un progetto di prova ha lasciato il volume. Nel 03 (parte sulla PR #87) c'è la nota su dove stanno i dati, e dopo `up -d` le migrazioni erano ancora `Ran`. Il `down -v` l'ho provato solo su un progetto di prova, `altro` (04, passo 13). Non ho lanciato nessun `down -v` su Orarium, e non lo farò.
+- **Dalla pagina:** la pagina dei servizi chiama `mysql_data` «VOLUME» e `/var/lib/mysql` «CONTAINER_PATH» (citazioni sotto). Il `backend/README.md` dice che `down` lascia i dati (riga 102) e che con `down -v` il volume viene cancellato, e con lui i dati (riga 103).
+- **Dedotto:** il volume viene collegato a `/var/lib/mysql`: quello che MySQL scrive finisce nel volume. Collegamento con la domanda 8: con il volume già pieno, cambiare `MYSQL_*` non cambia il database.
+- **Non provato:** `down` sul progetto Orarium; cambiare le `MYSQL_*` con il volume già pieno.
 
-13. Cosa significano `interval: 10s`, `timeout: 5s` e `retries: 10`, e dopo quanto tempo, in caso di fallimento continuo, il `db` diventa `unhealthy`? (Riprendi dal 05.)
+### 10. Il bind mount di `docker/mysql/init`
 
-**Risposta:**
+> Nella riga `./docker/mysql/init:/docker-entrypoint-initdb.d:ro`: quali sono i tre pezzi, che tipo di montaggio è, e cosa fa `:ro`? Cosa c'è nella cartella `docker/mysql/init`?
 
-- Nel `docker inspect` del `db` i tempi sono in nanosecondi. `Interval` vale `10000000000`, cioè 10 secondi. `Timeout` vale `5000000000`, cioè 5 secondi. `Retries` vale 10.
-- `interval` è il tempo tra un controllo e il successivo. `timeout` è il tempo massimo di un controllo: se lo supera, il controllo è fallito. `retries` è quanti fallimenti di fila servono.
-- Con 10 fallimenti di fila il `db` diventa `unhealthy`. Il `backend/README.md` (riga 100) dice lo stesso: 10 controlli falliti di fila, uno ogni 10 secondi.
-- Stima, non provata: 10 controlli da 10 secondi fanno circa 100 secondi, più i timeout. Per il `db` non l'ho misurata.
-- Altre misure: 17 secondi con `retries: 3` e `interval: 5s` (Redis di prova, 05 passo 13); 35 secondi con `retries: 10` e `interval: 3s` (06 passo 11).
-- `StartPeriod` non c'è: nel `compose.yaml` non c'è `start_period`.
-- Domanda aperta: cosa cambia senza `start_period` nei primi secondi di MySQL? Non l'ho provato.
+**Risposta:** è un bind mount: una cartella del mio pc collegata al contenitore. Non è un volume con nome, perché il percorso inizia con `./`. I tre pezzi sono `./docker/mysql/init` (la cartella sul mio pc), `/docker-entrypoint-initdb.d` (la cartella dentro il contenitore dove MySQL cerca gli script) e `ro` (sola lettura).
 
-14. Cosa c'è in `redis` uguale a `db`, e cosa è diverso (rispetto a `ports`, `environment`, `volumes`)? Perché `redis:8.2.6`? (D-004, riga 77.)
+- **Visto:** nella cartella c'è `01-test-database.sh`. Il nome compare nel commento di `.env.example` (riga 7). `orarium_test` è uguale a `DB_DATABASE` in `backend/phpunit.xml` (`Select-String`, riga 29).
+- **Dalla pagina:** i percorsi relativi devono iniziare con `.` o `..`, per non confonderli con i volumi con nome; `:ro` vuol dire che il contenitore può leggere la cartella ma non scriverci (pagina dei servizi, citazioni sotto). Il commento dello script (righe 2–3) dice che crea il database di test `orarium_test` e dà i permessi all'utente dell'app. La pagina Docker Hub dice che gli script partono alla prima partenza del contenitore, in ordine alfabetico, e che i file `.sh` senza il bit di esecuzione vengono letti con `source` invece di essere eseguiti. Il commento dello script e `backend/README.md` (riga 32) dicono invece «quando il volume è nuovo».
+- **Dedotto:** il prefisso `01-` fa sì che lo script parta per primo: questa è la mia idea.
+- **Non provato:** un contenitore nuovo con un volume già pieno (la pagina non lo dice); se `01-test-database.sh` ha il bit di esecuzione.
 
-**Risposta:**
+### 11. `CMD-SHELL` e il doppio dollaro
 
-- **Uguale a `db`:** hanno `image`, `ports` su `127.0.0.1`, `volumes` con un volume con nome, e un `healthcheck`. L'ho letto nel `compose.yaml`.
-- **Diverso:** `redis` non ha `environment`. Ha un solo volume (`redis_data:/data`), mentre `db` ne ha due. La porta è `6379`. Il `healthcheck` usa `CMD`, non `CMD-SHELL`.
-- **Perché `redis:8.2.6`:** D-004 (riga 76) scarta i tag generici come `redis:8` e `redis:latest`, perché la versione cambia nel tempo. La riga 77 sceglie `redis:8.2.6`, «come già fatto per MySQL».
-- **Sicurezza:** la pagina Docker Hub di Redis dice che la «Protected mode» è spenta di default, e che se la porta esce dal pc è aperta senza password. Quindi nel mio file la porta deve restare su `127.0.0.1` (collegato alla domanda 5). È una mia lettura, non una prova.
-- Domanda aperta: `redis:8.2.6` è disponibile oggi (prova con `docker buildx imagetools inspect`, 16 novembre 2026). Non è nell'elenco dei tag di oggi, dove la serie 8.2 mostra `8.2.11`. Non so cosa cambia tra le due versioni. Se aggiornare, lo valuto in «Applicazione in Orarium».
-- Non provato: `redis:8` e `redis:latest` nel mio ambiente.
+> Cosa fa `CMD-SHELL` rispetto a `CMD`, e perché qui serve? Cosa fa `$$` davanti a `MYSQL_ROOT_PASSWORD`?
 
-15. Nella riga `redis_data:/data`: a cosa serve `/data` nell'immagine Redis?
+**Risposta:** `CMD-SHELL` fa partire il comando dalla shell del contenitore (`/bin/sh` su Linux); qui serve perché il comando legge una variabile. `$$` dà un dollaro letterale, che Compose non sostituisce.
 
-**Risposta:**
+- **Visto:** nel `docker inspect` del `db` il test contiene `-p$MYSQL_ROOT_PASSWORD`, con un dollaro solo; il valore della password non si vede: resta il nome della variabile.
+- **Dalla pagina:** `CMD-SHELL` è il primo elemento della lista `test`, e il comando parte con la shell di default del contenitore (`/bin/sh` su Linux). La pagina Interpolation dice che `$$` serve per avere un dollaro letterale, e che Compose non sostituisce il valore (citazioni sotto).
+- **Dedotto:** con `CMD` il programma parte direttamente, senza shell (la pagina dei servizi non lo dice). Il mio comando legge una variabile (`$MYSQL_ROOT_PASSWORD`) e per leggerla serve una shell, quindi uso `CMD-SHELL`: è una mia lettura, non una prova. Compose ha tolto un `$` prima di passare il comando al contenitore, ed è coerente con la pagina Interpolation (esercizio 05). Il valore vero lo sostituisce la shell del contenitore.
+- **Non provato:** la sostituzione dentro il contenitore: in questo output non la vedo.
 
-- La pagina Docker Hub di Redis dice che, con la persistenza attiva, i dati stanno in `VOLUME /data` (citazione sotto).
-- Quindi `/data` è la cartella dove Redis salva i dati, se la persistenza è attiva. Nel mio `compose.yaml`, `redis_data` è collegato lì.
-- La prova 6 mostra la regola `save` (`3600 1 300 100 60 10000`): quindi nel mio Redis gli snapshot sono previsti. La pagina Persistence e la pagina CONFIG GET (citazioni sotto) confermano il significato del parametro.
-- Che siano i valori predefiniti è una mia deduzione: nel `compose.yaml` non c'è nessun `command` né file di configurazione per `redis`.
-- Cosa c'è in `/data` l'ho visto nella prova 7.
+### 12. Il comando `mysqladmin ping`
 
-16. Nell'healthcheck di Redis (`["CMD", "redis-cli", "ping"]`): perché qui `CMD` e non `CMD-SHELL`? Cosa fa `redis-cli ping`?
+> Pezzo per pezzo, cosa fa `mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent`?
 
-**Risposta:**
+**Risposta:** `mysqladmin` è lo strumento con cui MySQL si amministra, e `ping` controlla se il server è acceso, non se la password è giusta (citazioni sotto). `-h 127.0.0.1` dice a quale indirizzo collegarsi, `-uroot` è l'utente, `-p$MYSQL_ROOT_PASSWORD` è la password e `--silent` toglie i messaggi se la connessione non riesce.
 
-- La pagina di PING (citazione sotto) dice che il comando risponde `PONG` e serve a controllare che la connessione sia ancora viva.
-- Nel 05 (passo 12) il log del Redis di prova mostra `Output: "PONG\n"` con `ExitCode: 0`: questo l'ho visto.
-- Perché `CMD` e non `CMD-SHELL`: la mia idea è che non serve la shell, perché il comando non ha variabili né pipe. È una deduzione: la pagina dei servizi non lo dice.
-- Confronto (non è una prova): `mysqladmin ping` esce con 0 anche con «Access denied», perché controlla solo che il server sia acceso. La pagina di PING dice invece che Redis dà errore quando non riesce a servire i dati, per esempio mentre carica da disco. Quindi il controllo di Redis dice di più su «risponde davvero».
-- Domanda aperta: la pagina PING descrive il comando, ma non dice che `redis-cli ping` mandi proprio quel comando. È una mia deduzione, coerente con il `PONG` del 05.
-- Domanda aperta: la pagina non dice con quale codice esce `redis-cli` in caso di errore, quindi non so se Docker segnerebbe `unhealthy`. Non l'ho provato.
-- Non provato: `redis-cli ping` con Redis fermo o con password.
+- **Visto:** se la connessione riesce, `mysqld is alive` compare lo stesso: è quello che ho visto nel log del 05.
+- **Dalla pagina:** `--silent` esce senza messaggi solo se la connessione non riesce. `-p` e la password devono stare attaccati, senza spazio. Il controllo passa se il comando esce con codice 0 (Dockerfile reference); con una password sbagliata `mysqladmin ping` esce comunque con 0. Il valore predefinito di `--host` è `localhost`, e `--socket` serve per le connessioni a localhost.
+- **Dedotto:** con `localhost` il client userebbe il file socket, con `127.0.0.1` una connessione TCP; non è detto che sia il motivo di Orarium. Come nella domanda 11, il valore della password lo mette la shell del contenitore: non lo vedo. Che `mysqld is alive` compaia anche con `--silent` è una mia deduzione dalla frase della pagina. L'avviso «insecure» del log del 05 corrisponde a quello che la pagina scrive sulla password nella riga di comando.
+- **Non provato:** che Docker segni `healthy` con una password sbagliata (è una deduzione).
 
-17. In fondo al file, `mysql_data:` e `redis_data:` sono scritti senza niente dopo i due punti. Cosa significa, e perché vanno dichiarati lì? Il nome vero sul mio computer è `orarium_mysql_data`: da dove viene il prefisso?
+### 13. Tempi dell'healthcheck di `db`
 
-**Risposta:**
+> Cosa significano `interval: 10s`, `timeout: 5s` e `retries: 10`, e dopo quanto tempo, in caso di fallimento continuo, il `db` diventa `unhealthy`? (Riprendi dal 05.)
 
-- Il blocco `volumes:` in fondo dichiara i volumi con nome che uno o più servizi possono usare (citazione sotto). Ogni servizio deve avere l'accesso esplicito con `volumes` dentro `services` (stessa citazione). Quindi `db` usa `mysql_data`, `redis` usa `redis_data`.
-- `mysql_data:` senza niente dopo i due punti: la pagina dice che una voce può essere vuota, e in quel caso si usa la configurazione di default del motore (citazione sotto). `docker compose up` crea il volume se non c'è.
-- Il prefisso: senza un `name` esplicito, il nome di default include il nome del progetto. L'esempio della pagina (sezione `external`) mostra `{project_name}_db-data`. Il progetto è `orarium` (04, passo 1), quindi il nome vero è `orarium_mysql_data`.
-- Lo stesso schema l'ho visto con `prova-compose_dati` (04, passo 10). I nomi `orarium_mysql_data` e `orarium_redis_data` compaiono nelle prove 2 e 4.
-- Non provato: cosa succede se metto un `name:` esplicito su `mysql_data`.
+**Risposta:** `interval` è il tempo tra un controllo e il successivo, `timeout` è il tempo massimo di un controllo, `retries` è quanti fallimenti di fila servono. Con 10 fallimenti di fila il `db` diventa `unhealthy`.
+
+- **Visto:** nel `docker inspect` del `db` i tempi sono in nanosecondi: `Interval` vale `10000000000` (10 secondi), `Timeout` vale `5000000000` (5 secondi), `Retries` vale 10. `StartPeriod` non c'è: nel `compose.yaml` non c'è `start_period`. Altre misure: 17 secondi con `retries: 3` e `interval: 5s` (Redis di prova, 05 passo 13); 35 secondi con `retries: 10` e `interval: 3s` (06 passo 11).
+- **Dalla pagina:** il `backend/README.md` (riga 100) dice lo stesso: 10 controlli falliti di fila, uno ogni 10 secondi.
+- **Dedotto:** se un controllo supera il `timeout`, il controllo è fallito. Stima: 10 controlli da 10 secondi fanno circa 100 secondi, più i timeout.
+- **Non provato:** il tempo per il `db` non l'ho misurato.
+
+### 14. Confronto tra `db` e `redis`
+
+> Cosa c'è in `redis` uguale a `db`, e cosa è diverso (rispetto a `ports`, `environment`, `volumes`)? Perché `redis:8.2.6`? (D-004, riga 77.)
+
+**Risposta:** uguale a `db`: hanno `image`, `ports` su `127.0.0.1`, `volumes` con un volume con nome e un `healthcheck`. Diverso: `redis` non ha `environment`, ha un solo volume (`redis_data:/data`) mentre `db` ne ha due, la porta è `6379` e il `healthcheck` usa `CMD`, non `CMD-SHELL`.
+
+- **Visto:** l'ho letto nel `compose.yaml`. `redis:8.2.6` è disponibile oggi (prova con `docker buildx imagetools inspect`, 16 novembre 2026).
+- **Dalla pagina:** D-004 (riga 76) scarta i tag generici come `redis:8` e `redis:latest`, perché la versione cambia nel tempo; la riga 77 sceglie `redis:8.2.6`, «come già fatto per MySQL». `redis:8.2.6` non è nell'elenco dei tag di oggi, dove la serie 8.2 mostra `8.2.11`. La pagina Docker Hub di Redis dice che la «Protected mode» è spenta di default e che, se la porta esce dal pc, è aperta senza password.
+- **Dedotto:** nel mio file la porta deve restare su `127.0.0.1` (collegato alla domanda 5): è una mia lettura, non una prova.
+- **Non provato:** cosa cambia tra `8.2.6` e `8.2.11` (se aggiornare, lo valuto in «Applicazione in Orarium»); `redis:8` e `redis:latest` nel mio ambiente.
+
+### 15. La cartella `/data` di Redis
+
+> Nella riga `redis_data:/data`: a cosa serve `/data` nell'immagine Redis?
+
+**Risposta:** `/data` è la cartella dove Redis salva i dati, se la persistenza è attiva. Nel mio `compose.yaml`, `redis_data` è collegato lì.
+
+- **Visto:** la prova 6 mostra la regola `save` (`3600 1 300 100 60 10000`), quindi nel mio Redis gli snapshot sono previsti. Cosa c'è in `/data` l'ho visto nella prova 7.
+- **Dalla pagina:** la pagina Docker Hub di Redis dice che, con la persistenza attiva, i dati stanno in `VOLUME /data`. Le pagine Persistence e CONFIG GET confermano il significato del parametro (citazioni sotto).
+- **Dedotto:** i valori di `save` sono quelli predefiniti: nel `compose.yaml` non c'è nessun `command` né file di configurazione per `redis`.
+
+### 16. L'healthcheck di Redis
+
+> Nell'healthcheck di Redis (`["CMD", "redis-cli", "ping"]`): perché qui `CMD` e non `CMD-SHELL`? Cosa fa `redis-cli ping`?
+
+**Risposta:** qui `CMD` e non `CMD-SHELL` perché, secondo me, il comando non ha variabili né pipe e non serve la shell. `redis-cli ping` controlla che Redis risponda: il comando PING risponde `PONG`.
+
+- **Visto:** nel 05 (passo 12) il log del Redis di prova mostra `Output: "PONG\n"` con `ExitCode: 0`.
+- **Dalla pagina:** la pagina di PING dice che il comando risponde `PONG` e serve a controllare che la connessione sia ancora viva (citazione sotto). Dice anche che Redis dà errore quando non riesce a servire i dati, per esempio mentre carica da disco.
+- **Dedotto:** non serve la shell perché il comando non ha variabili né pipe (la pagina dei servizi non lo dice). `redis-cli ping` manda proprio il comando PING, coerente con il `PONG` del 05. Confronto (non è una prova): `mysqladmin ping` esce con 0 anche con «Access denied», perché controlla solo che il server sia acceso, quindi il controllo di Redis dice di più su «risponde davvero».
+- **Non provato:** con quale codice esce `redis-cli` quando PING dà errore, quindi non so se Docker segnerebbe `unhealthy`; `redis-cli ping` con Redis fermo o con password.
+
+### 17. I volumi dichiarati in fondo
+
+> In fondo al file, `mysql_data:` e `redis_data:` sono scritti senza niente dopo i due punti. Cosa significa, e perché vanno dichiarati lì? Il nome vero sul mio computer è `orarium_mysql_data`: da dove viene il prefisso?
+
+**Risposta:** il blocco `volumes:` in fondo dichiara i volumi con nome che uno o più servizi possono usare; `mysql_data:` senza niente dopo i due punti è una voce vuota, e il motore usa la sua configurazione di default. Il prefisso viene dal nome del progetto: senza un `name` esplicito, il nome di default lo include.
+
+- **Visto:** `db` usa `mysql_data` e `redis` usa `redis_data` (`compose.yaml`). Lo stesso schema l'ho visto con `prova-compose_dati` (04, passo 10). I nomi `orarium_mysql_data` e `orarium_redis_data` compaiono nelle prove 2 e 4.
+- **Dalla pagina:** ogni servizio deve avere l'accesso esplicito con `volumes` dentro `services`; una voce vuota usa la configurazione di default del motore; `docker compose up` crea il volume se non c'è; l'esempio della sezione `external` mostra `{project_name}_db-data` (citazioni sotto).
+- **Dedotto:** il progetto è `orarium` (04, passo 1), quindi il nome vero è `orarium_mysql_data`.
+- **Non provato:** cosa succede se metto un `name:` esplicito su `mysql_data`.
 
 ## Dalla documentazione (parole originali)
 
