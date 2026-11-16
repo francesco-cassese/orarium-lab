@@ -60,68 +60,77 @@ Pagina «Define services in Docker Compose», sezione `depends_on`:
 
 ## Con parole mie
 
-1. Un servizio `app` ha `depends_on: - db` con la sintassi breve. Cosa è garantito quando parte `app` e cosa no? Fai un esempio tuo di cosa può andare storto e dì che è tuo.
+### 1. Cosa garantisce la sintassi breve
+ 
+> Un servizio `app` ha `depends_on: - db` con la sintassi breve. Cosa è garantito quando parte `app` e cosa no? Fai un esempio tuo di cosa può andare storto e dì che è tuo.
+ 
+**Risposta:** è garantito che `db` parta prima di `app`: Compose lo avvia per primo. Non è garantito che `db` sia pronto.
+ 
+- **Visto:** nel passo 4 `app` era già `Exited (0)` mentre `lento` era ancora `starting`.
+- **Dalla pagina:** con la sintassi breve Compose non aspetta che la dipendenza sia `healthy` prima di avviare il servizio che dipende da lei (citazione sopra).
+- **Dedotto:** esempio mio: al primo avvio MySQL crea utente e database; se `app` parte in quel momento, la connessione può fallire anche se `db` è già `Up`.
+- **Non provato:** l'esempio di MySQL al primo avvio.
 
-**Risposta:**
+### 2. `service_healthy` e il `healthcheck`
+ 
+> Cosa cambia scrivendo invece `depends_on: db: condition: service_healthy`? Che cosa deve avere il servizio `db` perché abbia senso? Cosa deduci se manca, tenendo separato ciò che dice la pagina?
+ 
+**Risposta:** con `service_healthy`, in Orarium `app` partirebbe solo quando `db` è `healthy`, non appena è `Up`. Perché abbia senso, `db` deve avere un `healthcheck`: in Orarium c'è (esercizio 05).
+ 
+- **Visto:** nel passo 13, senza `healthcheck`, `up -d` fallisce subito con `has no healthcheck configured`, dopo circa 2 secondi: Compose non aspetta.
+- **Dalla pagina:** con `service_healthy` Compose aspetta che il `healthcheck` di `db` passi, poi crea il servizio che dipende da lui (citazione sopra). La pagina non dice cosa succede quando il `healthcheck` manca: lo lascio tra le cose che la pagina non dice.
 
-- **Garantito:** `db` parte prima di `app`. Compose lo avvia per primo.
-- **Non garantito:** che `db` sia pronto. La pagina dice che con la sintassi breve Compose non aspetta lo stato `healthy`. Visto nel passo 4: `app` era già `Exited (0)` mentre `lento` era ancora `starting`.
-- **Esempio mio (non provato):** al primo avvio MySQL crea utente e database. Se `app` parte in quel momento, la connessione può fallire, anche se `db` è già `Up`.
+### 3. Se `db` non diventa mai `healthy`
+ 
+> Se `db` non diventa mai `healthy`, cosa ti aspetti che faccia `docker compose up -d`? Scrivila come ipotesi: la mettiamo alla prova nell'esercizio.
+ 
+**Risposta:** ipotesi, scritta prima dell'esercizio: `up -d` non dà errore subito e aspetta che `db` diventi `healthy`; se non succede mai, alla fine dà un errore sulla dipendenza non pronta e `app` non parte.
+ 
+- **Visto:** con `db` che diventa `healthy` (passo 8), `up -d` aspetta e non dà errore, come ipotizzato. Con `lento` che non diventa mai `healthy` (passo 11), `up -d` dà errore dopo 35 secondi, con `is unhealthy`, come ipotizzato. Nei casi senza `healthcheck` (passo 13) e con `exit 1` di `service_completed_successfully` (passo 15), `app` è rimasto `Created`.
+- **Non provato:** cosa succede ad `app` nel caso `unhealthy`: il `app-1` del passo 12 è quello del tentativo precedente.
 
-2. Cosa cambia scrivendo invece `depends_on: db: condition: service_healthy`? Che cosa deve avere il servizio `db` perché abbia senso? Cosa deduci se manca, tenendo separato ciò che dice la pagina?
+### 4. Una condizione per ogni caso
+ 
+> Per ciascuna delle tre condizioni, descrivi un caso (in Orarium o in laboratorio) in cui sceglieresti proprio quella.
+ 
+**Risposta** (esempi miei):
 
-**Cosa dice la pagina:** con `service_healthy` Compose aspetta che il `healthcheck` di `db` passi, poi crea il servizio che dipende da lui.
+1. **`service_started`:** il servizio ha bisogno che l'altro sia partito, ma non che sia pronto. Esempio mio: un `proxy` che inoltra le richieste a un `backend`.
+2. **`service_healthy`:** il servizio usa il database. Esempio: il backend Laravel di Orarium, che aspetta che il `healthcheck` di `db` passi (esercizio 05).
+3. **`service_completed_successfully`:** il servizio deve finire il lavoro. Esempio: un `migrate` che lancia `php artisan migrate` e termina con codice 0; il backend parte solo dopo.
+- **Visto:** la condizione `service_completed_successfully` l'ho vista nei passi 14 e 15: con codice 0 `app` parte, con codice 1 l'`up` fallisce e `app` resta `Created`. Oggi le migrazioni le lancio a mano dalla cartella `backend/`.
+- **Dedotto:** con `service_started`, il proxy parte appena il backend è `Up`; se il backend non è ancora pronto, le prime richieste possono fallire.
+- **Non provato:** gli esempi del `proxy` e del `migrate` in un file Compose reale.
 
-**Cosa cambia per Orarium:** `app` parte solo quando `db` è `healthy`, non appena è `Up`.
+### 5. `restart: true` e `unhealthy`
+ 
+> A cosa serve `restart: true`, e cosa la pagina dice che non copre? Un container che diventa `unhealthy` rientra in quel caso? Cosa dice la pagina e cosa no?
+ 
+**Risposta:** `restart: true` riavvia il servizio che dipende quando Compose riavvia o aggiorna la dipendenza.
+ 
+- **Dalla pagina:** non copre il riavvio automatico del runtime quando il container muore da solo (citazione `restart`). La pagina non dice che `unhealthy` rientri in `restart: true`: è solo uno stato del `healthcheck`.
+- **Dedotto:** un `unhealthy` non fa scattare `restart: true`.
+- **Non provato:** questa deduzione: da verificare.
 
-**Cosa serve:** `db` deve avere un `healthcheck`. In Orarium c'è (esercizio 05).
+### 6. L'ordine di `docker compose down`
+ 
+> Con `docker compose down`, in che ordine vengono rimossi `web` e `db`, e perché ha senso?
+ 
+**Risposta:** `web` viene rimosso prima di `db` e `redis`.
+ 
+- **Visto:** nei passi 6 e 10 sono stati rimossi prima `app-1`, poi `lento-1`, poi la rete.
+- **Dalla pagina:** Compose rimuove i servizi in ordine di dipendenza: `web` prima di `db` e `redis` (citazione sopra).
+- **Dedotto:** ha senso perché `web` usa `db`: se `db` si fermasse prima, `web` resterebbe senza database mentre ancora gira, e togliere prima chi dipende evita questo. È una deduzione, non provata.
 
-**Visto (passo 13):** senza `healthcheck`, `up -d` fallisce subito con `has no healthcheck configured`, dopo circa 2 secondi. Compose non aspetta. La pagina non dice cosa succede in questo caso: lo lascio tra le cose che la pagina non dice.
-
-3. Se `db` non diventa mai `healthy`, cosa ti aspetti che faccia `docker compose up -d`? Scrivila come ipotesi: la mettiamo alla prova nell'esercizio.
-
-**Ipotesi:**
-
-- Subito: nessun errore, aspetta che `db` diventi `healthy`.
-- Se non succede mai: alla fine un errore sulla dipendenza non pronta, e `app` non parte.
-- Non so quanto aspetta prima di arrendersi. Questo è il punto da provare nell'esercizio.
-
-**Esito nell'esercizio:**
-
-- Con `db` che diventa `healthy` (passo 8): `up -d` aspetta e non dà errore. Come ipotizzato.
-- Con `lento` che non diventa mai `healthy` (passo 11): errore dopo 35 secondi, con `is unhealthy`. Come ipotizzato.
-- Nel caso `unhealthy` non è verificato cosa succede ad `app`: il `app-1` del passo 12 è quello del tentativo precedente. Nei casi senza `healthcheck` (passo 13) e con `exit 1` di `service_completed_successfully` (passo 15), `app` è rimasto `Created`.
-
-4. Per ciascuna delle tre condizioni, descrivi un caso (in Orarium o in laboratorio) in cui sceglieresti proprio quella.
-
-**Risposta** (esempi miei, non provati):
-
-- **`service_started`**: il servizio ha bisogno che l'altro sia partito, ma non che sia pronto. Esempio mio: un `proxy` che inoltra le richieste a un `backend`. Il proxy parte appena il backend è `Up`; se il backend non è ancora pronto, le prime richieste possono fallire.
-- **`service_healthy`**: il servizio usa il database. Esempio: il backend Laravel di Orarium. Aspetta che il `healthcheck` di `db` passi (esercizio 05).
-- **`service_completed_successfully`**: il servizio deve finire il lavoro. Esempio: un `migrate` che lancia `php artisan migrate` e termina con codice 0. Il backend parte solo dopo. Oggi le migrazioni le lancio a mano dalla cartella `backend/`. La condizione l'ho vista nei passi 14 e 15: con codice 0 `app` parte, con codice 1 l'`up` fallisce e `app` resta `Created`.
-
-5. A cosa serve `restart: true`, e cosa la pagina dice che non copre? Un container che diventa `unhealthy` rientra in quel caso? Cosa dice la pagina e cosa no?
-
-**Risposta:**
-
-- **A cosa serve:** riavvia il servizio che dipende quando Compose riavvia o aggiorna la dipendenza.
-- **Non copre (dalla pagina):** il riavvio automatico del runtime quando il container muore da solo.
-- **`unhealthy` rientra?** La pagina non dice di sì. È solo uno stato del `healthcheck`.
-- **Deduzione (non provata):** un `unhealthy` non fa scattare `restart: true`. Da verificare.
-
-6. Con `docker compose down`, in che ordine vengono rimossi `web` e `db`, e perché ha senso?
-
-**Risposta:**
-
-- **Ordine (dalla pagina):** `web` viene rimosso prima di `db` e `redis`. Visto nei passi 6 e 10: prima `app-1`, poi `lento-1`, poi la rete.
-- **Perché ha senso (deduzione, non provata):** `web` usa `db`. Se `db` si ferma prima, `web` resterebbe senza database mentre ancora gira. Togliere prima chi dipende evita questo.
-
-7. Orarium oggi non usa `depends_on`: perché non serve adesso, e in quale caso futuro lo useresti? Un'ipotesi tua.
-
-**Risposta:**
-
-- **Perché non serve adesso (dal file):** `db` e `redis` sono indipendenti, e il backend Laravel gira fuori da Docker. Nessun servizio aspetta un altro.
-- **Quando lo userei (ipotesi mia, non provata):** se il backend finisse in un container nel `compose.yaml`. Lì gli metterei `depends_on` con `service_healthy` su `db`, così non parte prima che il database sia pronto.
+### 7. Perché Orarium non usa `depends_on`
+ 
+> Orarium oggi non usa `depends_on`: perché non serve adesso, e in quale caso futuro lo useresti? Un'ipotesi tua.
+ 
+**Risposta:** non serve adesso perché `db` e `redis` sono indipendenti e il backend Laravel gira fuori da Docker: nessun servizio aspetta un altro.
+ 
+- **Visto:** nel `compose.yaml` di Orarium non c'è nessun `depends_on`.
+- **Dedotto:** ipotesi mia: se il backend finisse in un container nel `compose.yaml`, gli metterei `depends_on` con `service_healthy` su `db`, così non parte prima che il database sia pronto.
+- **Non provato:** questa configurazione con il backend in un container.
 
 ## Esercizio: la traccia
 
