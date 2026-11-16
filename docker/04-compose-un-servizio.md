@@ -97,11 +97,12 @@ Traduzione: i servizi sono realizzati da un insieme di contenitori, che la piatt
 - **Dedotto:** il file si può rileggere, condividere e rifare identico da chiunque. Il limite è che il file descrive cosa far girare e con quali impostazioni, ma l'ordine di avvio non lo decide da solo: serve `depends_on`, che ho provato nell'esercizio 06.
 
 ### 2. `docker compose up -d` due volte di fila
- 
+
 > Hai un compose.yaml e lanci `docker compose up -d` due volte di fila. Cosa ti aspetti alla seconda volta?
- 
+
 **Risposta:** mi aspetto che non succeda niente di grave: Compose vede che i servizi sono già in esecuzione, quindi non crea contenitori nuovi e non me ne ritrovo due uguali.
- 
+
+- **Visto:** la seconda volta `up -d` stampa una sola riga, `Container prova-compose-web-1 Running`, e `CREATED` dice ancora `9 minutes ago`: Compose non ha ricreato niente (passo 9).
 - **Dedotto:** se il file non è cambiato, mi aspetto che lo dica nell'output, per esempio con lo stato «Running» o «up-to-date». Se invece i contenitori erano fermi, li riavvia.
 
 ### 3. `down` e `down -v`
