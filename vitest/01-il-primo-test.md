@@ -129,7 +129,7 @@ Non tocco la cartella `orarium`.
 ### Passo 2: preparare la cartella e installare Vitest
 
 - Comando: `pnpm init`, poi `pnpm add -D vitest`, dentro `vitest/01-primo-test`
-- Cosa ho visto: `pnpm init` ha creato `package.json` con nome `01-primo-test` e `"type": "module"`. `pnpm add -D vitest` ha aggiunto 35 pacchetti e ha scritto `vitest 5.1.0` in `devDependencies`; in tutto ci ha messo circa 9 secondi.
+- Cosa ho visto: `pnpm init` ha creato `package.json` con nome `01-primo-test` e `"type": "module"`. `pnpm add -D vitest` ha aggiunto 35 pacchetti e ha scritto `vitest 5.1.0` in `devDependencies`; in tutto ci ha messo circa 9 secondi. Con `git status --short -uall`, lanciato in `vitest/01-primo-test`, i file non tracciati sono `package.json`, `pnpm-lock.yaml`, `somma.js` e `somma.test.js`; `node_modules` non compare.
 - Cosa ho concluso: Vitest è installato come dipendenza di sviluppo. L'output di `pnpm add` non dice se Vite è arrivato insieme a lui: l'ho controllato dopo con `pnpm why vite`, che mostra `vite@8.3.8` sotto `vitest@5.1.0` e «Found 1 version of vite». Quindi Vite è arrivato con Vitest e non l'ho installato io.
 
 ### Passo 3: un test per una funzione che non esiste (rosso)
@@ -182,7 +182,8 @@ Non tocco la cartella `orarium`.
  
 ### Cosa ho fatto
 
-- Comandi usati (descritti nel [diario](comandi.md)): `node -v`, `pnpm init`, `pnpm add -D vitest`, `pnpm why vite`, `pnpm exec vitest run`, `pnpm exec vitest`, `Rename-Item`.
+- Comandi usati (descritti nel [diario](comandi.md)): `node -v`, `pnpm init`, `pnpm add -D vitest`, `pnpm why vite`, `git status --short -uall`, `pnpm exec vitest run`, `pnpm exec vitest`, `Rename-Item`.
+- Nel codice committato, `somma.js` usa `export default somma;` e il test importa senza graffe: `import somma from './somma.js';`. Li ho rimessi così io, dopo il passo 4. Con questa coppia, `pnpm exec vitest run` è verde (Vitest v5.1.0, rilanciato il 16 novembre).
 
 ### Cosa ho visto
 
