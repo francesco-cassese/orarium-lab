@@ -86,7 +86,7 @@ Pagina «Define services in Docker Compose», sezione `depends_on`:
  
 **Risposta:** ipotesi, scritta prima dell'esercizio: `up -d` non dà errore subito e aspetta che `db` diventi `healthy`; se non succede mai, alla fine dà un errore sulla dipendenza non pronta e `app` non parte.
  
-- **Visto:** con `db` che diventa `healthy` (passo 8), `up -d` aspetta e non dà errore, come ipotizzato. Con `lento` che non diventa mai `healthy` (passo 11), `up -d` dà errore dopo 35 secondi, con `is unhealthy`, come ipotizzato. Nei casi senza `healthcheck` (passo 13) e con `exit 1` di `service_completed_successfully` (passo 15), `app` è rimasto `Created`.
+- **Visto:** nella prova `lento` fa le veci di `db`. Con `lento` che diventa `healthy` (passo 8), `up -d` aspetta e non dà errore, come ipotizzato. Con `lento` che non diventa mai `healthy` (passo 11), `up -d` dà errore dopo 35 secondi, con `is unhealthy`, come ipotizzato. Nei casi senza `healthcheck` (passo 13) e con `exit 1` di `service_completed_successfully` (passo 15), `app` è rimasto `Created`.
 - **Non provato:** cosa succede ad `app` nel caso `unhealthy`: il `app-1` del passo 12 è quello del tentativo precedente.
 
 ### 4. Una condizione per ogni caso
