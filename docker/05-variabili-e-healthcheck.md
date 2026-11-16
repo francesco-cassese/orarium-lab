@@ -94,41 +94,71 @@ Pagina «Dockerfile reference», sezione HEALTHCHECK:
 
 ## Con parole mie
 
-1. Spiega a un collega la differenza tra il file `.env` e la voce `environment:`: cosa fa ciascuno, e cosa succede se c'è solo il `.env`?
+### 1. Differenza tra `.env` e `environment:`
+ 
+> Spiega a un collega la differenza tra il file `.env` e la voce `environment:`: cosa fa ciascuno, e cosa succede se c'è solo il `.env`?
+ 
+**Risposta:** il `.env` lavora sul file: è un file con i valori delle variabili, e Compose lo legge e usa quei valori al posto dei `${...}`. `environment:` lavora sul contenitore: sta nel servizio e mette le variabili dentro il contenitore. Se c'è solo il `.env`, i valori finiscono nel file che Compose legge, ma non nel contenitore.
+ 
+- **Dalla pagina:** per arrivare nel contenitore serve una voce esplicita nel servizio: `environment:` oppure `env_file:`.
 
-**Risposta:** Il `.env` è un file con i valori delle variabili. Compose lo legge e usa quei valori al posto dei `${...}` nel file che legge. La voce `environment:` invece sta nel servizio e mette le variabili dentro il contenitore. Quindi sono due cose diverse: il `.env` lavora sul file, `environment:` lavora sul contenitore. Se c'è solo il `.env`, i valori finiscono nel file che Compose legge, ma non nel contenitore: per arrivarci serve una voce `environment:` (oppure `env_file:`).
+### 2. Il percorso di `MYSQL_PASSWORD`
+ 
+> Nel `compose.yaml` di Orarium trova la riga `MYSQL_PASSWORD: ${MYSQL_PASSWORD}` e racconta il percorso del valore, dal `.env` fino al contenitore, in due passaggi. Non scrivere nessuna password e non incollare il tuo `.env`.
+ 
+**Risposta:** il valore parte dal `.env`, dove c'è una variabile che si chiama `MYSQL_PASSWORD`. Primo passaggio: prima di avviare, Compose legge il `.env` e usa il valore al posto di `${MYSQL_PASSWORD}` nel file che legge. Secondo passaggio: la riga `MYSQL_PASSWORD:` dentro `environment:` del servizio `db` mette quel valore nel contenitore, come variabile d'ambiente del database.
+ 
+### 3. Variabile mancante nel `.env`
+ 
+> Cosa succede se in `.env` manca una variabile che il `compose.yaml` usa? Scrivi cosa dice la pagina e cosa deduci per Orarium.
+ 
+**Risposta:** se una variabile manca, Compose la sostituisce con una stringa vuota. In Orarium, se in `.env` manca `MYSQL_PASSWORD`, la riga del servizio `db` arriverebbe vuota al contenitore.
+ 
+- **Dalla pagina:** se una variabile non è impostata, Compose la sostituisce con una stringa vuota.
+- **Dedotto:** per Orarium, se in `.env` manca `MYSQL_PASSWORD`, la riga `MYSQL_PASSWORD:` del servizio `db` arriverebbe vuota al contenitore.
+- **Non provato:** se il database si avvierebbe lo stesso o darebbe errore.
 
-2. Nel `compose.yaml` di Orarium trova la riga `MYSQL_PASSWORD: ${MYSQL_PASSWORD}` e racconta il percorso del valore, dal `.env` fino al contenitore, in due passaggi. Non scrivere nessuna password e non incollare il tuo `.env`.
+### 4. Variabili d'ambiente e secrets
+ 
+> La pagina sconsiglia le variabili d'ambiente per le password e propone i secrets. Orarium le usa lo stesso: quali ragioni ipotizzi, e cosa è certo (guarda `.env.example` e `.gitignore`)?
+ 
+**Risposta:** la mia ipotesi è che Orarium giri in locale, sul mio pc, e che per un progetto così i secrets siano più da configurare di quanto serva.
+ 
+- **Visto:** il `.gitignore` esclude `.env` e `.env.*`, tranne `.env.example`, quindi il `.env` della radice non va su Git. Il `.env.example` ha `MYSQL_PASSWORD=` vuota e il commento «Never commit .env»; dice anche che la stessa password va in `backend/.env` come `DB_PASSWORD`, quindi la password sta in due file sul mio pc. Che `backend/.env` non vada su Git l'ho verificato nel passo 9 della traccia, con `git check-ignore`: è ignorato dal `.gitignore` di `backend/`.
+- **Dalla pagina:** la pagina sconsiglia le variabili d'ambiente per le password e propone i secrets.
+- **Dedotto:** con le variabili d'ambiente è tutto più semplice. Il rischio è che la password finisca in un posto dove non dovrebbe, per esempio nei log o nelle variabili del contenitore. Per lo sviluppo sul mio pc il rischio mi sembra accettabile, ma per un server vero non lo farei.
+- **Non provato:** che nelle variabili del contenitore la password si possa vedere con `docker inspect`.
 
-**Risposta:** Il valore parte dal `.env`, dove c'è una variabile che si chiama `MYSQL_PASSWORD`. Primo passaggio: prima di avviare, Compose legge il `.env` e usa il valore al posto di `${MYSQL_PASSWORD}` nel file che legge. Secondo passaggio: la riga `MYSQL_PASSWORD:` dentro `environment:` del servizio `db` mette quel valore nel contenitore, come variabile d'ambiente del database.
+### 5. `Up` e `(healthy)`
+ 
+> Un contenitore risulta `Up`: basta per dire che il servizio funziona? Cosa aggiunge `(healthy)`?
+ 
+**Risposta:** no, `Up` da solo non basta: vuol dire che il processo è partito, ma non che il servizio risponda. `(healthy)` aggiunge che l'ultimo controllo del `healthcheck` è andato a buon fine.
+ 
+- **Visto:** nell'esercizio 04 ho visto `orarium-db-1` come `Up 2 hours (healthy)`: il database era partito e il suo controllo passava.
+- **Dalla pagina:** la pagina del healthcheck dice che lo stato è `starting` all'inizio, poi diventa `healthy` quando un controllo passa.
+- **Dedotto:** un database può essere `Up` anche mentre è bloccato, per esempio mentre prepara le tabelle: questo è un mio esempio, non viene dalla pagina. Il limite è che il `healthcheck` è scritto da me, quindi se il test è sbagliato può dire `healthy` anche quando il servizio non funziona davvero.
 
-3. Cosa succede se in `.env` manca una variabile che il `compose.yaml` usa? Scrivi cosa dice la pagina e cosa deduci per Orarium.
+### 6. `interval`, `timeout` e `retries`
+ 
+> Nel `healthcheck` di `db` di Orarium cosa fanno `interval: 10s`, `timeout: 5s` e `retries: 10`? Dopo quanti controlli falliti di fila il contenitore diventa `unhealthy`?
+ 
+**Risposta:** `interval: 10s` è il tempo tra un controllo e il successivo, `timeout: 5s` è il tempo massimo di un singolo controllo (se ci mette di più, quel controllo conta come fallito) e `retries: 10` è il numero di fallimenti di fila necessari: con 10 fallimenti di fila il contenitore diventa `unhealthy`.
+ 
+- **Dalla pagina:** servono tanti fallimenti consecutivi quanti sono i `retries` perché il contenitore sia `unhealthy`, e basta un solo controllo riuscito per tornare `healthy`.
+- **Dedotto:** con controlli ogni 10 secondi ci vogliono circa 100 secondi, più il tempo dei controlli che vanno in timeout.
+- **Non provato:** il tempo non l'ho misurato.
 
-**Cosa dice la pagina:** se una variabile non è impostata, Compose la sostituisce con una stringa vuota.
-
-**Cosa deduco:** per Orarium, se in `.env` manca `MYSQL_PASSWORD`, la riga `MYSQL_PASSWORD:` del servizio `db` arriverebbe vuota al contenitore. Non so ancora se il database si avvierebbe lo stesso o se darebbe errore: non l'ho provato.
-
-4. La pagina sconsiglia le variabili d'ambiente per le password e propone i secrets. Orarium le usa lo stesso: quali ragioni ipotizzi, e cosa è certo (guarda `.env.example` e `.gitignore`)?
-
-**Cosa ipotizzo:** Orarium gira in locale, sul mio pc, e per un progetto così i secrets mi sembrano più da configurare di quanto serva. Con le variabili d'ambiente è tutto più semplice. Il rischio è che la password finisca in un posto dove non dovrebbe, per esempio nei log o nelle variabili del contenitore, dove ipotizzo che si possa vedere con `docker inspect` (non l'ho verificato). Per lo sviluppo sul mio pc il rischio mi sembra accettabile, ma per un server vero non lo farei.
-
-**Cosa è certo:** il `.gitignore` esclude `.env` e `.env.*`, tranne `.env.example`, quindi il `.env` della radice non va su Git. Il `.env.example` ha `MYSQL_PASSWORD=` vuota e il commento «Never commit .env». Dice anche che la stessa password va in `backend/.env` come `DB_PASSWORD`: quindi la password sta in due file sul mio pc. Che `backend/.env` non vada su Git l'ho verificato nel passo 9 della traccia, con `git check-ignore`: è ignorato dal `.gitignore` di `backend/`.
-
-5. Un contenitore risulta `Up`: basta per dire che il servizio funziona? Cosa aggiunge `(healthy)`?
-
-**Risposta:** No, `Up` da solo non basta. Vuol dire che il processo è partito, ma non che il servizio risponda. Un database può essere `Up` anche mentre è bloccato. Per esempio può stare ancora preparando le tabelle: questo è un mio esempio, non viene dalla pagina. La pagina del healthcheck dice che lo stato è `starting` all'inizio, poi diventa `healthy` quando un controllo passa. Quindi `(healthy)` aggiunge questo: l'ultimo controllo del `healthcheck` è andato a buon fine. Nell'esercizio 04 ho visto `orarium-db-1` come `Up 2 hours (healthy)`: il database era partito e il suo controllo passava. Il limite è che il `healthcheck` è scritto da me, quindi se il test è sbagliato può dire `healthy` anche quando il servizio non funziona davvero.
-
-6. Nel `healthcheck` di `db` di Orarium cosa fanno `interval: 10s`, `timeout: 5s` e `retries: 10`? Dopo quanti controlli falliti di fila il contenitore diventa `unhealthy`?
-
-**Risposta:** `interval: 10s` è il tempo tra un controllo e il successivo. `timeout: 5s` è il tempo massimo che do a un singolo controllo: se ci mette di più, quel controllo conta come fallito. `retries: 10` è il numero di fallimenti di fila necessari. La pagina lo scrive chiaro: serve un numero di fallimenti consecutivi pari a `retries` perché il contenitore sia `unhealthy`. Quindi con `retries: 10` servono 10 fallimenti di fila, e basta un solo controllo riuscito per tornare `healthy`.
-
-Quanto tempo ci vuole non lo so con precisione. Deduco che, con controlli ogni 10 secondi, ci vogliono circa 100 secondi, più il tempo dei controlli che vanno in timeout. Non l'ho misurato.
-
-7. Perché per `db` il `test` è `CMD-SHELL` con una stringa e per `redis` è `CMD` con una lista? Scrivi cosa dice la pagina e cosa deduci tu.
-
-**Cosa dice la pagina:** il primo elemento della lista deve essere `NONE`, `CMD` o `CMD-SHELL`. Se `test` è una stringa, vale come `CMD-SHELL` con quella stringa. `CMD-SHELL` fa girare il comando con la shell del contenitore (`/bin/sh` su Linux).
-
-**Cosa deduco:** con `CMD` il programma parte direttamente, senza shell. Per `db` uso quindi una stringa, cioè `CMD-SHELL`, perché il comando contiene `$$MYSQL_ROOT_PASSWORD`. La variabile va letta dalla shell del contenitore, e con `CMD` non ci sarebbe nessuna shell a espanderla. Il `$$` serve a dire a Compose di non sostituirla lui. Visto con una prova, non letto sulla pagina: con un solo `$` (`echo $SALUTO`) `config` mostra `echo ciao`, quindi Compose sostituisce la variabile da solo. La pagina Interpolation, trovata dopo l'esercizio, lo conferma (vedi «Dopo l'esercizio»). Per `redis` il comando `redis-cli ping` non ha variabili né pipe, quindi basta lanciarlo direttamente con `CMD` e una lista. Non l'ho provato togliendo la shell da `db`.
+### 7. `CMD-SHELL` per `db`, `CMD` per `redis`
+ 
+> Perché per `db` il `test` è `CMD-SHELL` con una stringa e per `redis` è `CMD` con una lista? Scrivi cosa dice la pagina e cosa deduci tu.
+ 
+**Risposta:** per `db` il `test` è `CMD-SHELL` con una stringa perché il comando contiene `$$MYSQL_ROOT_PASSWORD`, e la variabile va letta dalla shell del contenitore. Per `redis` basta `CMD` con una lista, perché `redis-cli ping` non ha variabili né pipe.
+ 
+- **Visto:** con un solo `$` (`echo $SALUTO`), `config` mostra `echo ciao`, quindi Compose sostituisce la variabile da solo. È una prova mia, non letta sulla pagina.
+- **Dalla pagina:** il primo elemento della lista deve essere `NONE`, `CMD` o `CMD-SHELL`; se `test` è una stringa, vale come `CMD-SHELL` con quella stringa; `CMD-SHELL` fa girare il comando con la shell del contenitore (`/bin/sh` su Linux). La pagina Interpolation, trovata dopo l'esercizio, conferma il comportamento del `$$` (vedi «Dopo l'esercizio»).
+- **Dedotto:** con `CMD` il programma parte direttamente, senza shell; con `CMD` non ci sarebbe nessuna shell a espandere la variabile, e il `$$` serve a dire a Compose di non sostituirla lui.
+- **Non provato:** togliere la shell da `db`.
 
 ## Esercizio: la traccia
 
