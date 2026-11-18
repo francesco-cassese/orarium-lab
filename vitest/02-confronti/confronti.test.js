@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import dividi from './dividi';
+import dividi from './dividi.js';
 
 class Utente {
     constructor(nome) {
