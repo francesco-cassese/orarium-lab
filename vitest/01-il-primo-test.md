@@ -119,6 +119,7 @@ Vitest richiede Node 22.12.0 o più recente e Vite 6.4.0 o più recente. La pagi
  
 Lavoro in `vitest/01-primo-test`, dentro il lab. Tutti i file di codice li scrivo io, da capo.
 Non tocco la cartella `orarium`.
+Nella cartella dell'esercizio c'è l'ultima versione dei file di codice: le versioni intermedie (per esempio quelle con un test rosso di proposito) sono descritte solo nei passi. In ogni cartella `pnpm test` esegue `vitest run`; durante l'esercizio ho usato `pnpm exec vitest run`.
  
 ### Passo 1: controllare la versione di Node
 
@@ -211,6 +212,7 @@ Non tocco la cartella `orarium`.
 - Come sono configurati i test di Orarium (ambiente, `@testing-library/react`, `vi.stubGlobal`)? In `IngredientList.test.jsx` non è spiegato, e non ho ancora letto la configurazione.
 - Perché in `IngredientList.test.jsx` alcuni test usano `userEvent.type` direttamente e altri `userEvent.setup()`?
 - Cosa significa «Object.is equality» nel messaggio di errore?
+  Risposta in parte nell'esercizio 02: la pagina di `expect` dice che `toBe` equivale a `Object.is`; cosa fa esattamente `Object.is` resta aperto (vedi «Domande aperte» di 02).
 - Cosa indicano `x1` e `x2` accanto a `RERUN` nel watch?
 - Perché Vite compare sotto Vitest: è una dipendenza o un «peer»?
 

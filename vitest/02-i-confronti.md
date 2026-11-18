@@ -123,6 +123,7 @@ Dove l'analogia si ferma: due torte hanno ciascuna il suo peso e il suo posto, m
  
 Lavoro in `vitest/02-confronti`, dentro il lab. Tutti i file di codice li scrivo io, da capo.
 Non tocco la cartella `orarium`.
+Nella cartella dell'esercizio c'è l'ultima versione dei file di codice: le versioni intermedie (per esempio quelle con un test rosso di proposito) sono descritte solo nei passi. In ogni cartella `pnpm test` esegue `vitest run`; durante l'esercizio ho usato `pnpm exec vitest run`.
 Scrivo nella traccia solo quello che è successo: il comando, cosa ho visto, cosa ho concluso. Le previsioni non ci vanno.
  
 ### Passo 1: preparare la cartella
