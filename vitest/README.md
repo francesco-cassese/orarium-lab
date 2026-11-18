@@ -17,3 +17,4 @@ Esercizi su Vitest, dal più semplice all'avanzato.
 ## Indice degli esercizi
 
 - [x] [01 - Il primo test](01-il-primo-test.md)
+- [x] [02 - I confronti](02-i-confronti.md)
