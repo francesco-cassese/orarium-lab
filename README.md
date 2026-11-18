@@ -12,7 +12,7 @@ Orarium è il progetto a cui mi serve tutto questo: un'app per pianificare produ
 
 - Prendo le pagine della documentazione ufficiale e le faccio sintetizzare a Claude, che prepara la teoria, le domande e la traccia di ogni esercizio.
 - Controllo le citazioni sul testo della pagina originale. I comandi, le osservazioni e le risposte «con parole mie» sono scritti da me.
-- Ogni esercizio ha teoria, citazioni dalla documentazione ufficiale e le mie risposte con parole mie. Fa eccezione il 07, una lettura guidata del `compose.yaml`: non ha la teoria e parte dalle mie risposte, che rimandano alle citazioni che stanno sotto.
+- Ogni esercizio ha teoria, citazioni dalla documentazione ufficiale e le mie risposte con parole mie, in questo ordine. Fanno eccezione due esercizi di Docker: il 02 ha la teoria in sezioni numerate e le domande aperte prima delle citazioni; il 07 è una lettura guidata del `compose.yaml`, non ha la teoria e parte dalle mie risposte, che rimandano alle citazioni che stanno sotto.
 - Ogni risposta «con parole mie» ha una frase di risposta e, quando servono, queste etichette: **Visto** (l'ho controllato io con un comando o aprendo un file), **Dalla pagina** (lo dice una fonte scritta), **Dedotto** (è un mio ragionamento) e **Non provato** (non l'ho verificato).
 - Gli esercizi vanno dal più semplice all'avanzato, un concetto nuovo per volta.
 - I commit sono in italiano, con tipo e scope in inglese secondo le [Conventional Commits](https://www.conventionalcommits.org/it/v1.0.0/).
