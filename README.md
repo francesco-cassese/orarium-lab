@@ -6,7 +6,7 @@ Orarium è il progetto a cui mi serve tutto questo: un'app per pianificare produ
 ## Come è organizzata
 
 - [docker/](docker/): esercizi su Docker (immagine e contenitore, avviare, vedere e fermare un contenitore, porte e volumi, Compose con un servizio, variabili d'ambiente e healthcheck, `depends_on`, il `compose.yaml` di Orarium).
-- [vitest/](vitest/): esercizi su Vitest (il primo test, i confronti `toBe`, `toEqual`, `toStrictEqual`, `.not`, `toThrow`, `describe`, `beforeEach` e `afterEach`).
+- [vitest/](vitest/): esercizi su Vitest (il primo test, i confronti `toBe`, `toEqual`, `toStrictEqual`, `.not`, `toThrow`, `describe`, `beforeEach`, `afterEach` e i test asincroni con `async`/`await`, `resolves` e `rejects`).
 
 ## Come lavoro
 
@@ -19,4 +19,4 @@ Orarium è il progetto a cui mi serve tutto questo: un'app per pianificare produ
 
 ## Stato
 
-Ho fatto gli esercizi da 01 a 07 di Docker: immagine e contenitore, come avviarli, vederli e fermarli, porte e volumi, Compose con un servizio, variabili d'ambiente e healthcheck, due servizi con `depends_on`, il `compose.yaml` di Orarium riga per riga, con il diario dei comandi. Il blocco su Docker è finito ([vedi l'indice](docker/README.md)). Ho cominciato Vitest e ho fatto gli esercizi 01, 02 e 03 ([vedi l'indice](vitest/README.md)).
+Ho fatto gli esercizi da 01 a 07 di Docker: immagine e contenitore, come avviarli, vederli e fermarli, porte e volumi, Compose con un servizio, variabili d'ambiente e healthcheck, due servizi con `depends_on`, il `compose.yaml` di Orarium riga per riga, con il diario dei comandi. Il blocco su Docker è finito ([vedi l'indice](docker/README.md)). Ho cominciato Vitest e ho fatto gli esercizi da 01 a 04 ([vedi l'indice](vitest/README.md)).
