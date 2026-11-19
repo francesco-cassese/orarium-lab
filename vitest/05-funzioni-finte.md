@@ -208,7 +208,7 @@ Nella cartella dell'esercizio c'è l'ultima versione dei file di codice: le vers
 
 ### Cosa ho fatto
 
-- Comandi usati: `mkdir`, `Set-Location`, `pnpm init`, `pnpm add -D vitest`, `git status --short -uall`, `pnpm test`, `Select-String`, `pnpm exec vitest run`. Descritti nel [diario](comandi.md).
+- Comandi usati: `mkdir`, `Set-Location`, `pnpm init`, `pnpm add -D vitest`, `git status --short -uall`, `pnpm test`, `$LASTEXITCODE`, `Select-String`, `pnpm exec vitest run`. Descritti nel [diario](comandi.md).
 
 ### Cosa ho visto
 
