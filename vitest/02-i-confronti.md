@@ -231,6 +231,7 @@ Scrivo nella traccia solo quello che è successo: il comando, cosa ho visto, cos
  
 - Perché il messaggio di errore suggerisce `toStrictEqual` invece di `toEqual`?
 - La domanda dell'esercizio 01 su «Object.is equality» resta aperta: so che `toBe` equivale a `Object.is`, ma non so ancora cosa fa esattamente `Object.is`.
+- Legato alla risposta 4: la regola «la chiamata va dentro una funzione» vale anche per `rejects.toThrow`? Chiusa nell'esercizio 04 (passo 5): no, con `rejects` la chiamata non va in una funzione, e il test passa. È anche quello che dice la pagina di `expect`.
 
 ### Applicazione in Orarium
  
