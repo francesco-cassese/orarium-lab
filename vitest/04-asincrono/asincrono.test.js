@@ -6,7 +6,7 @@ test('controlla che il nome sia farina', async () => {
     expect(ingrediente.nome).toBe('farina');
 });
 
-test('con resolves, la promessa restituisce l’ingrediente con id 1 e nome farina', async () => {
+test("con resolves, la promessa restituisce l'ingrediente con id 1 e nome farina", async () => {
     await expect(leggiIngrediente(1)).resolves.toEqual({ id: 1, nome: 'farina' });
 });
 
