@@ -168,7 +168,7 @@ Nella cartella dell'esercizio c'è l'ultima versione dei file di codice: le vers
   - Avvio con `pnpm exec vitest` (modalità `DEV`): il test è verde, «1 passed», poi «Waiting for file changes».
   - Dopo aver cambiato il valore atteso da `5` a `6` e salvato, Vitest ha rilanciato il test da solo («RERUN somma.test.js x1») e l'ha segnato rosso: `expected 5 to be 6`, con la riga 6 evidenziata.
   - Rimesso `5` e salvato: Vitest ha rilanciato il test («RERUN somma.test.js x2») e il test è di nuovo verde, «1 passed», con «Waiting for file changes».
-  - Per sbaglio avevo rinominato il file mentre il watch era acceso: Vitest ha scritto `Test removed... [ somma.test.js ]`. Ho chiuso il watch con `Ctrl+C`: ha scritto `Cancelling test run. Press CTRL+c again to exit forcefully.` ed è tornato il prompt.
+  - Per sbaglio avevo rinominato il file da VS Code (senza un comando del terminale) mentre il watch era acceso: Vitest ha scritto `Test removed... [ somma.test.js ]`. Ho chiuso il watch con `Ctrl+C`: ha scritto `Cancelling test run. Press CTRL+c again to exit forcefully.` ed è tornato il prompt.
 - Cosa ho concluso: il modo watch rilancia il test a ogni salvataggio, senza che io lo lanci di nuovo, e mostra subito il risultato. Non lo ferma nemmeno quando il test fallisce. Si accorge anche quando il file viene rinominato: ha scritto `Test removed... [ somma.test.js ]`.
 - Uscita: `Ctrl+C` ha chiuso il modo watch, come previsto dal passo.
 
