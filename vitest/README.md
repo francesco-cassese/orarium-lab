@@ -25,3 +25,4 @@ Esercizi su Vitest, dal più semplice all'avanzato.
 - [x] [07 - Variabili d'ambiente](07-variabili-ambiente.md)
 - [x] [08 - Moduli finti](08-moduli-finti.md)
 - [x] [09 - Timer finti](09-timer-finti.md)
+- [x] [10 - Ambiente e preparazione dei test](10-ambiente-e-preparazione-test.md)
