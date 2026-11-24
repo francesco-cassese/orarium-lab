@@ -24,3 +24,4 @@ Esercizi su Vitest, dal più semplice all'avanzato.
 - [x] [06 - Spie e globali](06-spie-e-globali.md)
 - [x] [07 - Variabili d'ambiente](07-variabili-ambiente.md)
 - [x] [08 - Moduli finti](08-moduli-finti.md)
+- [x] [09 - Timer finti](09-timer-finti.md)
