@@ -237,6 +237,34 @@ Le run sono numerate come nella traccia. Le run 2 e 3 sono fallimenti voluti: se
 
 ### Applicazione in Orarium
 
+Ho misurato il tempo di `vitest run` su Orarium, con i flag da riga di comando e senza cambiare la configurazione, per capire se ha senso cambiare ambiente o isolamento. Ho usato i tre file del repo (`App.test.jsx`, `IngredientList.test.jsx`, `api/ingredients.test.js`, 22 test in tutto), scelti con un filtro sul nome. Nella mia cartella ci sono altri due file (`Esercizi.test.js` e `Componenti.test.jsx`, 16 test), che tengo fuori da Git con `.git/info/exclude`: con tutti e cinque i file i test sono 38.
+
+Versioni: Vitest 5.0.5, jsdom ^30.1.3, Node 24.16.0, pnpm 11.29.0, PowerShell 5.1. Condizioni del computer: non dichiarate.
+
+Metodo: per ogni variante ho fatto un riscaldamento, scartato, e cinque esecuzioni. Ordine: partenza, `--no-isolate`, `--pool=vmThreads`, `--no-isolate --no-file-parallelism`, partenza di controllo.
+
+- **Visto:** i due blocchi di partenza hanno mediane di 3,23 s e 3,27 s: le condizioni sono rimaste stabili.
+- **Visto:** `--no-isolate` da solo e `--pool=vmThreads` non mostrano differenze visibili rispetto alla partenza; con `vmThreads` compare la voce `worker` al 3%.
+- **Visto:** con `--no-isolate --no-file-parallelism` la quota `environment` scende al 21–22% (invece di 44–46%), `tests` sale al 68–69%, e la durata è 3,06 s (2,98–3,15): circa 0,2 s in meno, con intervalli che non si sovrappongono.
+- **Visto:** in tutte le varianti 22 test su 22 sono passati.
+- **Visto:** `IngredientList.test.jsx` da solo ha impiegato circa 2 s nelle due esecuzioni intere che ho visto (tre test da circa mezzo secondo).
+- **Visto:** il messaggio di Vitest su jsdom creato più volte e il suggerimento su `vmThreads` e `isolate: false` non sono comparsi in nessuna esecuzione di oggi.
+- **Dalla copia pubblica di orarium:** `src/test/setup.js` importa i matcher di `@testing-library/jest-dom/vitest` e fa `cleanup()` in `afterEach`.
+- **Visto:** riscaldamento con tutti e cinque i file: `environment` al 56%, 38 test, 4,21 s.
+- **Dalla pagina:** (Improving Performance, sezione Profile First) «The percentages are relative to the sum of all tracked phases, not to the wall-clock time: phases run in parallel workers, so their sum is usually larger than the run itself.» (serve a leggere le percentuali).
+- **Dalla pagina:** (Improving Performance, sezione Test Environments, tabella, riga `isolate: false`): «tests must not depend on a clean window or module state; run vitest doctor to check».
+- **Dalla pagina:** (Improving Performance, sezione Test Environments, tabella, riga `pool: 'vmThreads'`): «test code runs in a VM realm: cross-realm instanceof edge cases with externalized packages, and memory is not reclaimed as reliably (see vmMemoryLimit)».
+- **Dalla pagina:** (Improving Performance, sezione Profile First, fase `tests`) «A run dominated by this phase has little to gain from configuration changes.»
+- **Dalla pagina:** (pagina Pool, sezione `vmThreads`) «This makes tests run faster, but the VM module is unstable when running ESM code.»
+- **Dedotto:** la quota `environment` che si dimezza con i due flag insieme dipende dal fatto che `jsdom` viene creato una volta sola invece di tre. È coerente con le misure e con la tabella, ma non l'ho visto direttamente, perché non ho stampato i pid.
+- **Dedotto:** per me il guadagno di circa 0,2 s non vale il compromesso, perché con tre file e con `IngredientList` che occupa circa 2 s di timer veri il risparmio è piccolo.
+- **Non provato:** quanti worker abbiano usato i tre file nei blocchi in parallelo.
+- **Non provato:** se `vitest doctor` esiste nella 5.0.5.
+- **Non provato:** se i test futuri restano indipendenti senza isolamento, e quali moduli di Orarium tengono stato condiviso.
+- **Non provato:** da dove venisse il 60% di `environment` annotato prima.
+
+Nessuna PR per ora, è una scelta.
+
 ## Fonti
 
 - [Test Environment](https://vitest.dev/guide/environment)
