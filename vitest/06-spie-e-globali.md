@@ -97,7 +97,7 @@ Un mock si ricorda le chiamate, i valori restituiti e le implementazioni che gli
 
 ## Esercizio: la traccia
 
-Lavoro in `vitest/06-spie`, dentro il lab. Tutti i file di codice li scrivo io, da capo.
+Lavoro in `vitest/06-spie`, dentro il lab.
 Non tocco la cartella `orarium`.
 Scrivo nella traccia solo quello che è successo: il comando, cosa ho visto, cosa ho concluso. Le previsioni non ci vanno.
 Nella cartella dell'esercizio c'è l'ultima versione dei file di codice: le versioni intermedie (per esempio quelle con un test rosso di proposito) sono descritte solo nei passi. In ogni cartella `pnpm test` esegue `vitest run`; durante l'esercizio ho usato `pnpm exec vitest run`.

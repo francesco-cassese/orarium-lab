@@ -126,7 +126,7 @@ Dove l'analogia si ferma: in cucina capisco a occhio quanto serve aspettare; in 
 
 ## Esercizio: la traccia
 
-Lavoro in `vitest/04-asincrono`, dentro il lab. Tutti i file di codice li scrivo io, da capo.
+Lavoro in `vitest/04-asincrono`, dentro il lab.
 Non tocco la cartella `orarium`.
 Scrivo nella traccia solo quello che è successo: il comando, cosa ho visto, cosa ho concluso. Le previsioni non ci vanno.
 Nella cartella dell'esercizio c'è l'ultima versione dei file di codice: le versioni intermedie (per esempio quelle con un test rosso di proposito) sono descritte solo nei passi. In ogni cartella `pnpm test` esegue `vitest run`; durante l'esercizio ho usato `pnpm exec vitest run`.

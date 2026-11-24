@@ -117,7 +117,7 @@ Vitest richiede Node 22.12.0 o più recente e Vite 6.4.0 o più recente. La pagi
  
 ## Esercizio: la traccia
  
-Lavoro in `vitest/01-primo-test`, dentro il lab. Tutti i file di codice li scrivo io, da capo.
+Lavoro in `vitest/01-primo-test`, dentro il lab.
 Non tocco la cartella `orarium`.
 Nella cartella dell'esercizio c'è l'ultima versione dei file di codice: le versioni intermedie (per esempio quelle con un test rosso di proposito) sono descritte solo nei passi. In ogni cartella `pnpm test` esegue `vitest run`; durante l'esercizio ho usato `pnpm exec vitest run`.
  
