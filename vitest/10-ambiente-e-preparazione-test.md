@@ -47,7 +47,7 @@ Dove l'analogia si ferma: una teglia sporca la vedo e la lavo a mano; in un test
 - Da [Improving Performance, disattivare l'isolamento](https://vitest.dev/guide/improving-performance): "This greatly increases test times, which might not be desirable for projects that don't rely on side effects and properly cleanup their state"; "In this case disabling isolation will improve the speed of your tests."; "To do that, you can provide `--no-isolate` flag to the CLI or set `test.isolate` property in the config to `false`."; "If you are using `vmThreads` pool, you cannot disable isolation."
 - Da [isolate](https://main.vitest.dev/config/isolate): "Run tests in an isolated environment. This option has no effect on `vmThreads` and `vmForks` pools."
 - Da [pool](https://vitest.dev/config/pool): "Pool used to run tests in."
-- Da [Test Environments](https://vitest.dev/guide/environment), tabella dei pool: "none - files in the same worker share the environment and module state"
+- Da [Improving Performance, Test Environments](https://vitest.dev/guide/improving-performance), tabella dei pool: "none - files in the same worker share the environment and module state"
 
 ## Con parole mie
 
