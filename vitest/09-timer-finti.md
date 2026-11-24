@@ -253,13 +253,17 @@ Le run sono numerate come nella traccia.
 
 ### Applicazione in Orarium
 
-Il debounce sulla ricerca degli ingredienti.
+In Orarium la PR #93, «perf(frontend): wait before searching while the user types», mette un debounce sulla ricerca degli ingredienti.
 
-- **Visto:** Run 19–21 di questo esercizio: con `clearTimeout` il debounce passa, e senza `clearTimeout` la funzione viene chiamata due volte.
+- **Visto:** con `clearTimeout` il debounce di questo esercizio passa (Run 19 e 21).
+- **Visto:** senza `clearTimeout` la funzione viene chiamata due volte (Run 20).
+- **Visto:** nella PR le richieste durante la digitazione passano da 6 a 1.
+- **Visto:** dopo l'ultimo tasto la lista arriva circa 314 ms dopo (`keyMs` da 78,8 a 392,9 ms).
+- **Visto:** con `userEvent.type` e i timer finti il test è andato in timeout a 5000 ms: è un blocco, non un test rosso.
+- **Visto:** con `fireEvent.change` e `act(() => vi.advanceTimersByTime(...))` i test sono passati.
 - **Dalla pagina:** la pagina di Vitest non parla di debounce.
-- **Dedotto:** che ridurrebbe le richieste durante la digitazione. Non l'abbiamo misurato.
 
-Nessuna PR per ora, è una scelta.
+PR #93, in `main` come `fd52c48`.
 
 ## Fonti
 
