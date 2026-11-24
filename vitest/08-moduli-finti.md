@@ -224,11 +224,12 @@ Ho cercato nel mio `orarium` locale, in `frontend/src`, in sola lettura, con `gi
 - **Visto:** con una ricerca nei file locali (non con `git grep`), `Componenti.test.jsx` e `Esercizi.test.js` risultano usare `vi.fn`. Sono file locali non tracciati: non li conto come lavoro di Orarium.
 - **Visto:** `frontend/src/IngredientList.jsx`, riga 2, importa `fetchIngredients` da `./api/ingredients.js` come import di default, e la riga 20 lo chiama. `frontend/src/api/ingredients.js`, riga 25, definisce `fetchIngredients`, e la riga 43 lo esporta con `export default`.
 - **Dalla pagina:** «If you are mocking a module with default export, you will need to provide a default key within the returned factory function object.»
-- **Dedotto:** un test diretto di `fetchIngredients` con `vi.stubGlobal`, e non con `vi.mock`, sarebbe il candidato naturale. Non l'ho ancora scritto.
+- **Visto:** test diretto di `fetchIngredients` con `vi.stubEnv`, `vi.stubGlobal`, `vi.unstubAllEnvs` e `vi.unstubAllGlobals`, senza `vi.mock`: 5 test, ciascuno visto rosso prima. `pnpm check` dà 34 test in locale, 18 nei file tracciati, e la CI è verde.
 
-Nessuna PR per ora, è una scelta.
+PR #91, in `main` come `720ac5c`.
 
 ## Fonti
 
 - [Vi (vi.mock, vi.doMock, vi.hoisted, vi.importActual)](https://vitest.dev/api/vi)
 - [Repo Orarium, commit b582ce6](https://github.com/francesco-cassese/orarium/commit/b582ce6)
+- [Repo Orarium, PR #91](https://github.com/francesco-cassese/orarium/pull/91)
