@@ -1,0 +1,25 @@
+{
+  "name": "01-punti-di-riferimento",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "^11.7.0",
+      "onFail": "download"
+    }
+  },
+  "type": "module",
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.2",
+    "jsdom": "^31.0.1",
+    "vitest": "^5.1.2"
+  }
+}
