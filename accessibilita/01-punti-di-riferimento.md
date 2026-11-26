@@ -189,11 +189,21 @@ Lavoro in `accessibilita/01-punti-di-riferimento`, dentro il lab. Non tocco la c
 
 ### Domande aperte
 
-- Il paginatore di Orarium ha due pulsanti, non collegamenti. Il W3C, MDN e Bootstrap parlano di collegamenti; il W3C e Bootstrap mettono la paginazione in un `<nav>` con un'etichetta, ma nessuna delle tre pagine parla di pulsanti. Metterlo in un `<nav>` è una scelta da decidere in Orarium, con le alternative.
+- Il paginatore di Orarium ha due pulsanti, non collegamenti. Il W3C, MDN e Bootstrap parlano di collegamenti; il W3C e Bootstrap mettono la paginazione in un `<nav>` con un'etichetta, ma nessuna delle tre pagine parla di pulsanti. Metterlo in un `<nav>` è una scelta da decidere in Orarium, con le alternative. Deciso in Orarium con D-015 (PR #143): dentro un `<nav aria-label="Paginazione">`. Resta aperto se i pulsanti vadano bene al posto dei collegamenti.
 - Se il paginatore diventasse una lista di collegamenti, servirebbe `aria-current="page"` sul collegamento della pagina corrente (Bootstrap, sezione Active)? Con i due pulsanti di oggi non c'è un collegamento per pagina.
 - Come legge davvero uno screen reader un `<nav>` con etichetta: da provare con uno screen reader vero.
 
 ### Applicazione in Orarium
+
+In Orarium il paginatore sta ora dentro `<nav aria-label="Paginazione">`: issue #142, PR #143, scelta registrata come D-015 in `docs/DECISIONS.md`. Il motivo della scelta, di Francesco: «come dice la documentazione».
+
+- **Visto:** il test nuovo di `Pagination.test.jsx` cerca `getByRole('navigation', { name: 'Paginazione' })` e controlla con `toContainElement` che i due pulsanti siano dentro. Prima della modifica era rosso: «Unable to find an accessible element with the role "navigation" and name "Paginazione"», con `paragraph` e due `button` tra i ruoli trovati. Dopo la modifica passano tutti i 25 test.
+- **Visto:** un errore mio nel test: con `{ name: 'avanti' }` (minuscolo) il pulsante «Avanti» non si trova. Con una stringa il nome va scritto uguale, maiuscole comprese.
+- **Visto:** i test già scritti, che cercano i pulsanti per ruolo e nome, non sono cambiati e passano.
+- **Dalla pagina:** (jest-dom, README, sezione `toContainElement`) «This allows you to assert whether an element contains another element as a descendant or not.» Sotto `toContainHTML` la stessa pagina scrive: «It should not be used to check DOM structure that you control. Please use toContainElement instead.»
+- **Dedotto:** ho tenuto l'etichetta anche se nella pagina c'è un solo `<nav>`: il W3C dice che in quel caso può non servire, Bootstrap la consiglia per ogni paginazione.
+- **Non provato:** come lo screen reader legge il paginatore, e come appare la pagina nel browser.
+- **Non provato:** se un `<nav>` con due pulsanti sia coerente con le pagine lette, che parlano di collegamenti.
 
 ## Fonti
 
