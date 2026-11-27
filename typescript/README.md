@@ -16,6 +16,10 @@ Esercizi su TypeScript, dal più semplice all'avanzato.
 
 ## Indice degli esercizi
 
-- [ ] [01 - Cos'è TypeScript](01-cose-typescript.md): gli appunti sono fatti, l'esercizio è da rifare.
+Il modulo 01 è diviso in tre parti, ognuna con i suoi appunti e la sua cartella di esercizi.
+
+- [x] [01a - I tipi in JavaScript](01a-tipi-in-javascript/01a-i-tipi-in-javascript.md)
+- [x] [01b - Quando si scopre un errore](01b-quando-si-scopre-un-errore/01b-quando-si-scopre-un-errore.md)
+- [x] [01c - Cosa produce tsc](01c-cosa-produce-tsc/01c-cosa-produce-tsc.md)
 
 Il diario dei comandi è in [comandi.md](comandi.md).
