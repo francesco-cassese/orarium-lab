@@ -8,6 +8,7 @@ Orarium è il progetto a cui mi serve tutto questo: un'app per pianificare produ
 - [docker/](docker/): esercizi su Docker (immagine e contenitore, avviare, vedere e fermare un contenitore, porte e volumi, Compose con un servizio, variabili d'ambiente e healthcheck, `depends_on`, il `compose.yaml` di Orarium).
 - [vitest/](vitest/): esercizi su Vitest (il primo test, i confronti `toBe`, `toEqual`, `toStrictEqual`, `.not`, `toThrow`, `describe`, `beforeEach`, `afterEach`, i test asincroni con `async`/`await`, `resolves` e `rejects`, le funzioni finte con `vi.fn()`, le spie con `vi.spyOn`, le globali finte con `vi.stubGlobal`, le variabili d'ambiente finte con `vi.stubEnv`, i moduli finti con `vi.mock`, i timer finti con `vi.useFakeTimers` e l'ambiente di esecuzione con `environment`, `setupFiles` e `isolate`).
 - [accessibilita/](accessibilita/): esercizi sull'accessibilità del web (i punti di riferimento o *landmark*, l'elemento `<nav>` e la sua etichetta, provati con Testing Library).
+- [typescript/](typescript/): esercizi su TypeScript (cos'è TypeScript, il controllo statico dei tipi, `tsc`, i tipi che spariscono).
 
 ## Come lavoro
 
@@ -20,4 +21,4 @@ Orarium è il progetto a cui mi serve tutto questo: un'app per pianificare produ
 
 ## Stato
 
-Ho fatto gli esercizi da 01 a 07 di Docker: immagine e contenitore, come avviarli, vederli e fermarli, porte e volumi, Compose con un servizio, variabili d'ambiente e healthcheck, due servizi con `depends_on`, il `compose.yaml` di Orarium riga per riga, con il diario dei comandi. Il blocco su Docker è finito ([vedi l'indice](docker/README.md)). Ho cominciato Vitest e ho fatto gli esercizi da 01 a 10 ([vedi l'indice](vitest/README.md)). Ho cominciato l'accessibilità e ho fatto l'esercizio 01 ([vedi l'indice](accessibilita/README.md)).
+Ho fatto gli esercizi da 01 a 07 di Docker: immagine e contenitore, come avviarli, vederli e fermarli, porte e volumi, Compose con un servizio, variabili d'ambiente e healthcheck, due servizi con `depends_on`, il `compose.yaml` di Orarium riga per riga, con il diario dei comandi. Il blocco su Docker è finito ([vedi l'indice](docker/README.md)). Ho cominciato Vitest e ho fatto gli esercizi da 01 a 10 ([vedi l'indice](vitest/README.md)). Ho cominciato l'accessibilità e ho fatto l'esercizio 01 ([vedi l'indice](accessibilita/README.md)). Ho cominciato TypeScript e ho fatto l'esercizio 01 ([vedi l'indice](typescript/README.md)).
