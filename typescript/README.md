@@ -16,6 +16,6 @@ Esercizi su TypeScript, dal più semplice all'avanzato.
 
 ## Indice degli esercizi
 
-- [x] [01 - Cos'è TypeScript](01-cose-typescript.md)
+- [ ] [01 - Cos'è TypeScript](01-cose-typescript.md): gli appunti sono fatti, l'esercizio è da rifare.
 
 Il diario dei comandi è in [comandi.md](comandi.md).
